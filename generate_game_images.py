@@ -234,3 +234,4 @@ for num, fname, title, badge_num, cat, color, bg_tint, icon in games_data:
     print(f"Generated {fname}")
 
 print("All 30 images generated successfully!")
+

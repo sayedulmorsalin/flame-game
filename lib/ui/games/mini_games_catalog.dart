@@ -21,12 +21,14 @@ class MiniGameMeta {
   final String rewardPill;
   final Color borderColor;
   final String buttonText;
+  final String playTime;
+  final String imageAsset;
   final Widget Function(BuildContext context, GameState gameState, VoidCallback onGameOver) builder;
 
   const MiniGameMeta({
     required this.id,
     required this.title,
-    required this.subtitle,
+    this.subtitle = '',
     required this.category,
     required this.icon,
     required this.tag,
@@ -34,6 +36,8 @@ class MiniGameMeta {
     required this.rewardPill,
     required this.borderColor,
     required this.buttonText,
+    required this.playTime,
+    required this.imageAsset,
     required this.builder,
   });
 }
@@ -52,6 +56,8 @@ class MiniGamesCatalog {
       rewardPill: 'UP TO 500 SAT',
       borderColor: AppTheme.purpleQuantum,
       buttonText: 'HACK',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_1_hash_cracker.png',
       builder: (ctx, state, onOver) => HashCrackerGame(gameState: state, onGameOver: onOver),
     ),
     // 2. Coin Catcher
@@ -66,6 +72,8 @@ class MiniGamesCatalog {
       rewardPill: 'UNLIMITED EARNINGS',
       borderColor: AppTheme.greenHash,
       buttonText: 'PLAY',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_2_coin_catcher.png',
       builder: (ctx, state, onOver) => CoinCatcherGame(gameState: state, onGameOver: onOver),
     ),
     // 3. Precision Drill
@@ -80,6 +88,8 @@ class MiniGamesCatalog {
       rewardPill: '200 SAT CRITS',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'DRILL',
+      playTime: '20s',
+      imageAsset: 'assets/images/games/game_3_precision_drill.png',
       builder: (ctx, state, onOver) => PrecisionDrillGame(gameState: state, onGameOver: onOver),
     ),
     // 4. Lucky Wheel
@@ -94,6 +104,8 @@ class MiniGamesCatalog {
       rewardPill: '1,500 SAT JACKPOT',
       borderColor: AppTheme.bitcoinGold,
       buttonText: 'SPIN',
+      playTime: '15s',
+      imageAsset: 'assets/images/games/game_4_lucky_wheel.png',
       builder: (ctx, state, onOver) => LuckyWheelGame(gameState: state, onGameOver: onOver),
     ),
     // 5. Flappy Miner
@@ -108,6 +120,8 @@ class MiniGamesCatalog {
       rewardPill: '25 SAT / GATE',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'FLY',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_5_flappy_miner.png',
       builder: (ctx, state, onOver) => FlappyMinerGame(gameState: state, onGameOver: onOver),
     ),
     // 6. Block Slicer
@@ -122,6 +136,8 @@ class MiniGamesCatalog {
       rewardPill: '50 SAT / SLICE',
       borderColor: AppTheme.richRuby,
       buttonText: 'SLASH',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_6_block_slicer.png',
       builder: (ctx, state, onOver) => BlockSlicerGame(gameState: state, onGameOver: onOver),
     ),
     // 7. Whack-A-Bug
@@ -136,6 +152,8 @@ class MiniGamesCatalog {
       rewardPill: '40 SAT / BUG',
       borderColor: AppTheme.orangeFrenzy,
       buttonText: 'WHACK',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_7_whack_a_bug.png',
       builder: (ctx, state, onOver) => WhackABugGame(gameState: state, onGameOver: onOver),
     ),
     // 8. Crypto Snake
@@ -150,6 +168,8 @@ class MiniGamesCatalog {
       rewardPill: '30 SAT / COIN',
       borderColor: AppTheme.greenHash,
       buttonText: 'SLITHER',
+      playTime: '60s',
+      imageAsset: 'assets/images/games/game_8_crypto_snake.png',
       builder: (ctx, state, onOver) => CryptoSnakeGame(gameState: state, onGameOver: onOver),
     ),
     // 9. Cyber Pong
@@ -164,6 +184,8 @@ class MiniGamesCatalog {
       rewardPill: '250 SAT VICTORY',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'BATTLE',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_9_cyber_pong.png',
       builder: (ctx, state, onOver) => CyberPongGame(gameState: state, onGameOver: onOver),
     ),
     // 10. Memory Card Match
@@ -178,6 +200,8 @@ class MiniGamesCatalog {
       rewardPill: 'UP TO 300 SAT',
       borderColor: AppTheme.purpleQuantum,
       buttonText: 'MATCH',
+      playTime: '40s',
+      imageAsset: 'assets/images/games/game_10_memory_match.png',
       builder: (ctx, state, onOver) => MemoryCardGame(gameState: state, onGameOver: onOver),
     ),
     // 11. Brick Breaker
@@ -192,6 +216,8 @@ class MiniGamesCatalog {
       rewardPill: '400+ SAT BONUS',
       borderColor: AppTheme.bitcoinGold,
       buttonText: 'SMASH',
+      playTime: '60s',
+      imageAsset: 'assets/images/games/game_11_brick_breaker.png',
       builder: (ctx, state, onOver) => MiningBrickBreakerGame(gameState: state, onGameOver: onOver),
     ),
     // 12. Falling Matrix Decoder
@@ -206,6 +232,8 @@ class MiniGamesCatalog {
       rewardPill: '40 SAT / HASH',
       borderColor: AppTheme.greenHash,
       buttonText: 'DECODE',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_12_matrix_decoder.png',
       builder: (ctx, state, onOver) => FallingMatrixGame(gameState: state, onGameOver: onOver),
     ),
     // 13. Crypto Jump
@@ -220,6 +248,8 @@ class MiniGamesCatalog {
       rewardPill: 'ALTITUDE MULTIPLIER',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'JUMP',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_13_crypto_jump.png',
       builder: (ctx, state, onOver) => CryptoJumpGame(gameState: state, onGameOver: onOver),
     ),
     // 14. Laser Defense
@@ -234,6 +264,8 @@ class MiniGamesCatalog {
       rewardPill: '35 SAT / MISSILE',
       borderColor: AppTheme.richRuby,
       buttonText: 'DEFEND',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_14_laser_defense.png',
       builder: (ctx, state, onOver) => LaserDefenseGame(gameState: state, onGameOver: onOver),
     ),
     // 15. Pipe Connection Puzzle
@@ -248,6 +280,8 @@ class MiniGamesCatalog {
       rewardPill: '220 SAT SOLVED',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'CONNECT',
+      playTime: '60s',
+      imageAsset: 'assets/images/games/game_15_pipe_connection.png',
       builder: (ctx, state, onOver) => PipeConnectionGame(gameState: state, onGameOver: onOver),
     ),
     // 16. Color Switch Orbit
@@ -262,6 +296,8 @@ class MiniGamesCatalog {
       rewardPill: '50 SAT / RING',
       borderColor: AppTheme.purpleQuantum,
       buttonText: 'ORBIT',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_16_color_switch.png',
       builder: (ctx, state, onOver) => ColorSwitchOrbitGame(gameState: state, onGameOver: onOver),
     ),
     // 17. Simon Hash Tap
@@ -276,6 +312,8 @@ class MiniGamesCatalog {
       rewardPill: '50 SAT / ROUND',
       borderColor: AppTheme.bitcoinGold,
       buttonText: 'REPEAT',
+      playTime: '40s',
+      imageAsset: 'assets/images/games/game_17_simon_tap.png',
       builder: (ctx, state, onOver) => CryptoSimonGame(gameState: state, onGameOver: onOver),
     ),
     // 18. Balance the Rig
@@ -290,6 +328,8 @@ class MiniGamesCatalog {
       rewardPill: '20 SAT / SEC',
       borderColor: AppTheme.orangeFrenzy,
       buttonText: 'BALANCE',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_18_balance_rig.png',
       builder: (ctx, state, onOver) => BalanceTheRigGame(gameState: state, onGameOver: onOver),
     ),
     // 19. Minecart Gold Rush
@@ -304,6 +344,8 @@ class MiniGamesCatalog {
       rewardPill: '40 SAT / NUGGET',
       borderColor: AppTheme.bitcoinGold,
       buttonText: 'RIDE',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_19_minecart_rush.png',
       builder: (ctx, state, onOver) => MinecartGoldRushGame(gameState: state, onGameOver: onOver),
     ),
     // 20. Crypto Tic-Tac-Toe
@@ -318,6 +360,8 @@ class MiniGamesCatalog {
       rewardPill: '180 SAT WIN',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'PLAY',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_20_tic_tac_toe.png',
       builder: (ctx, state, onOver) => CryptoTicTacToeGame(gameState: state, onGameOver: onOver),
     ),
     // 21. Space Miner Invaders
@@ -332,6 +376,8 @@ class MiniGamesCatalog {
       rewardPill: '50 SAT / ALIEN',
       borderColor: AppTheme.richRuby,
       buttonText: 'SHOOT',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_21_space_invaders.png',
       builder: (ctx, state, onOver) => SpaceMinerDefenderGame(gameState: state, onGameOver: onOver),
     ),
     // 22. Reaction Speed Gauge
@@ -346,6 +392,8 @@ class MiniGamesCatalog {
       rewardPill: 'UP TO 500 SAT',
       borderColor: AppTheme.greenHash,
       buttonText: 'TEST',
+      playTime: '15s',
+      imageAsset: 'assets/images/games/game_22_reaction_speed.png',
       builder: (ctx, state, onOver) => ReactionSpeedGame(gameState: state, onGameOver: onOver),
     ),
     // 23. Higher or Lower BTC
@@ -360,6 +408,8 @@ class MiniGamesCatalog {
       rewardPill: '50 SAT / STREAK',
       borderColor: AppTheme.bitcoinGold,
       buttonText: 'PREDICT',
+      playTime: '25s',
+      imageAsset: 'assets/images/games/game_23_higher_lower.png',
       builder: (ctx, state, onOver) => HigherLowerCryptoGame(gameState: state, onGameOver: onOver),
     ),
     // 24. 2048 SAT Merge
@@ -374,6 +424,8 @@ class MiniGamesCatalog {
       rewardPill: 'SCORE = SATOSHIS',
       borderColor: AppTheme.purpleQuantum,
       buttonText: 'MERGE',
+      playTime: '60s',
+      imageAsset: 'assets/images/games/game_24_merge_2048.png',
       builder: (ctx, state, onOver) => Merge2048SatGame(gameState: state, onGameOver: onOver),
     ),
     // 25. Cyber Rope Grapple
@@ -388,6 +440,8 @@ class MiniGamesCatalog {
       rewardPill: '40 SAT / SWING',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'SWING',
+      playTime: '40s',
+      imageAsset: 'assets/images/games/game_25_rope_grapple.png',
       builder: (ctx, state, onOver) => CyberRopeSwingGame(gameState: state, onGameOver: onOver),
     ),
     // 26. Rock Paper Scissors Bot
@@ -402,6 +456,8 @@ class MiniGamesCatalog {
       rewardPill: '60 SAT / WIN',
       borderColor: AppTheme.orangeFrenzy,
       buttonText: 'DUEL',
+      playTime: '20s',
+      imageAsset: 'assets/images/games/game_26_rps_bot.png',
       builder: (ctx, state, onOver) => RockPaperScissorsBotGame(gameState: state, onGameOver: onOver),
     ),
     // 27. Target Bullseye Archery
@@ -416,6 +472,8 @@ class MiniGamesCatalog {
       rewardPill: '100 SAT BULLSEYE',
       borderColor: AppTheme.bitcoinGold,
       buttonText: 'AIM',
+      playTime: '30s',
+      imageAsset: 'assets/images/games/game_27_target_archery.png',
       builder: (ctx, state, onOver) => TargetArcheryGame(gameState: state, onGameOver: onOver),
     ),
     // 28. Cyber Runner 2D
@@ -430,6 +488,8 @@ class MiniGamesCatalog {
       rewardPill: '30 SAT / JUMP',
       borderColor: AppTheme.cyanNeon,
       buttonText: 'RUN',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_28_cyber_runner.png',
       builder: (ctx, state, onOver) => CryptoRunner2DGame(gameState: state, onGameOver: onOver),
     ),
     // 29. Quantum Slots 777
@@ -444,6 +504,8 @@ class MiniGamesCatalog {
       rewardPill: '500 SAT JACKPOT',
       borderColor: AppTheme.bitcoinGold,
       buttonText: 'SPIN',
+      playTime: '15s',
+      imageAsset: 'assets/images/games/game_29_quantum_slots.png',
       builder: (ctx, state, onOver) => QuantumSlotsGame(gameState: state, onGameOver: onOver),
     ),
     // 30. Circuit Crosser
@@ -458,8 +520,9 @@ class MiniGamesCatalog {
       rewardPill: '150 SAT FINISH',
       borderColor: AppTheme.greenHash,
       buttonText: 'CROSS',
+      playTime: '45s',
+      imageAsset: 'assets/images/games/game_30_circuit_crosser.png',
       builder: (ctx, state, onOver) => CircuitCrosserGame(gameState: state, onGameOver: onOver),
     ),
   ];
 }
-

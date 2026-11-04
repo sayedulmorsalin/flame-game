@@ -41,7 +41,8 @@ class MinersScreen extends StatefulWidget {
 }
 
 class _MinersScreenState extends State<MinersScreen> {
-  int _selectedFilterIndex = 0; // 0: All-Time, 1: Weekly League, 2: Arcade Champs
+  int _selectedFilterIndex =
+      0; // 0: All-Time, 1: Weekly League, 2: Arcade Champs
 
   // Baseline NPC miners in the crypto universe
   final List<MinerRankEntry> _staticMiners = const [
@@ -229,8 +230,14 @@ class _MinersScreenState extends State<MinersScreen> {
             children: [
               // Rank Pill
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                decoration: AppTheme.badgeDecoration(color: miner.badgeColor, borderRadius: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 4,
+                ),
+                decoration: AppTheme.badgeDecoration(
+                  color: miner.badgeColor,
+                  borderRadius: 8,
+                ),
                 child: Text(
                   'GLOBAL RANK #$rank',
                   style: GoogleFonts.chakraPetch(
@@ -270,7 +277,10 @@ class _MinersScreenState extends State<MinersScreen> {
               const SizedBox(height: 16),
               // Coin Balance Stat Card
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceSecondary,
                   borderRadius: BorderRadius.circular(12),
@@ -308,7 +318,11 @@ class _MinersScreenState extends State<MinersScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.location_on, size: 14, color: AppTheme.cyanNeon),
+                  const Icon(
+                    Icons.location_on,
+                    size: 14,
+                    color: AppTheme.cyanNeon,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     miner.location,
@@ -351,7 +365,9 @@ class _MinersScreenState extends State<MinersScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            miner.isPlayer ? 'YOU ARE AWESOME ⚡' : 'SEND RESPECT 👍',
+                            miner.isPlayer
+                                ? 'YOU ARE AWESOME ⚡'
+                                : 'SEND RESPECT 👍',
                             style: GoogleFonts.chakraPetch(
                               fontSize: 13,
                               fontWeight: FontWeight.w900,
@@ -372,14 +388,21 @@ class _MinersScreenState extends State<MinersScreen> {
     );
   }
 
-  Widget _buildAvatarWidget(MinerRankEntry miner, {double size = 48, bool showBorderGlow = false}) {
+  Widget _buildAvatarWidget(
+    MinerRankEntry miner, {
+    double size = 48,
+    bool showBorderGlow = false,
+  }) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: AppTheme.surfaceSecondary,
-        border: Border.all(color: miner.badgeColor, width: size > 60 ? 2.5 : 2.0),
+        border: Border.all(
+          color: miner.badgeColor,
+          width: size > 60 ? 2.5 : 2.0,
+        ),
         boxShadow: showBorderGlow
             ? [
                 BoxShadow(
@@ -395,7 +418,8 @@ class _MinersScreenState extends State<MinersScreen> {
             ? Image.network(
                 miner.profilePicUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildFallbackEmoji(miner, size),
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildFallbackEmoji(miner, size),
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return _buildFallbackEmoji(miner, size);
@@ -410,10 +434,7 @@ class _MinersScreenState extends State<MinersScreen> {
     return Container(
       color: AppTheme.surfaceSecondary,
       child: Center(
-        child: Text(
-          miner.avatarEmoji,
-          style: TextStyle(fontSize: size * 0.45),
-        ),
+        child: Text(miner.avatarEmoji, style: TextStyle(fontSize: size * 0.45)),
       ),
     );
   }
@@ -427,7 +448,9 @@ class _MinersScreenState extends State<MinersScreen> {
       builder: (context, _) {
         final rankedMiners = _getRankedList();
         final playerIndex = rankedMiners.indexWhere((m) => m.isPlayer);
-        final playerRank = playerIndex >= 0 ? playerIndex + 1 : rankedMiners.length;
+        final playerRank = playerIndex >= 0
+            ? playerIndex + 1
+            : rankedMiners.length;
         final playerEntry = playerIndex >= 0 ? rankedMiners[playerIndex] : null;
 
         final top1 = rankedMiners.isNotEmpty ? rankedMiners[0] : null;
@@ -503,11 +526,16 @@ class _MinersScreenState extends State<MinersScreen> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.bitcoinGold.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.bitcoinGold.withValues(alpha: 0.6)),
+                      border: Border.all(
+                        color: AppTheme.bitcoinGold.withValues(alpha: 0.6),
+                      ),
                     ),
                     child: Column(
                       children: [
@@ -553,7 +581,10 @@ class _MinersScreenState extends State<MinersScreen> {
             // 3. TOP 3 PODIUM DISPLAY
             if (top1 != null && top2 != null && top3 != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 16,
+                ),
                 decoration: AppTheme.cyberCardDecoration(
                   borderColor: AppTheme.bitcoinGold,
                   glowColor: AppTheme.bitcoinGold,
@@ -617,7 +648,10 @@ class _MinersScreenState extends State<MinersScreen> {
             // 4. PLAYER'S LIVE STANDING STICKY CARD
             if (playerEntry != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF2E2218), Color(0xFF1B1622)],
@@ -653,7 +687,11 @@ class _MinersScreenState extends State<MinersScreen> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    _buildAvatarWidget(playerEntry, size: 44, showBorderGlow: true),
+                    _buildAvatarWidget(
+                      playerEntry,
+                      size: 44,
+                      showBorderGlow: true,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
@@ -672,7 +710,10 @@ class _MinersScreenState extends State<MinersScreen> {
                               ),
                               const SizedBox(width: 6),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 1,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppTheme.bitcoinGold,
                                   borderRadius: BorderRadius.circular(4),
@@ -779,7 +820,10 @@ class _MinersScreenState extends State<MinersScreen> {
                 onTap: () => _showMinerDetails(miner, rank),
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 11,
+                  ),
                   decoration: BoxDecoration(
                     color: miner.isPlayer
                         ? AppTheme.bitcoinGold.withValues(alpha: 0.12)
@@ -788,13 +832,17 @@ class _MinersScreenState extends State<MinersScreen> {
                     border: Border.all(
                       color: miner.isPlayer
                           ? AppTheme.bitcoinGold
-                          : (isTop3 ? rankColor.withValues(alpha: 0.6) : AppTheme.surfaceBorderSubtle),
+                          : (isTop3
+                                ? rankColor.withValues(alpha: 0.6)
+                                : AppTheme.surfaceBorderSubtle),
                       width: miner.isPlayer ? 1.8 : 1.0,
                     ),
                     boxShadow: miner.isPlayer
                         ? [
                             BoxShadow(
-                              color: AppTheme.bitcoinGold.withValues(alpha: 0.25),
+                              color: AppTheme.bitcoinGold.withValues(
+                                alpha: 0.25,
+                              ),
                               blurRadius: 8,
                             ),
                           ]
@@ -817,7 +865,11 @@ class _MinersScreenState extends State<MinersScreen> {
                       ),
                       const SizedBox(width: 8),
                       // Profile Picture with live avatar
-                      _buildAvatarWidget(miner, size: 42, showBorderGlow: isTop3 || miner.isPlayer),
+                      _buildAvatarWidget(
+                        miner,
+                        size: 42,
+                        showBorderGlow: isTop3 || miner.isPlayer,
+                      ),
                       const SizedBox(width: 10),
                       // Name & Title
                       Expanded(
@@ -833,7 +885,9 @@ class _MinersScreenState extends State<MinersScreen> {
                                     style: GoogleFonts.chakraPetch(
                                       fontSize: 13.5,
                                       fontWeight: FontWeight.w900,
-                                      color: miner.isPlayer ? AppTheme.bitcoinGold : AppTheme.textPrimary,
+                                      color: miner.isPlayer
+                                          ? AppTheme.bitcoinGold
+                                          : AppTheme.textPrimary,
                                       letterSpacing: 0.4,
                                     ),
                                   ),
@@ -841,7 +895,10 @@ class _MinersScreenState extends State<MinersScreen> {
                                 if (miner.isPlayer) ...[
                                   const SizedBox(width: 5),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                      vertical: 1,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: AppTheme.bitcoinGold,
                                       borderRadius: BorderRadius.circular(4),
@@ -865,7 +922,9 @@ class _MinersScreenState extends State<MinersScreen> {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.chakraPetch(
                                 fontSize: 10.5,
-                                color: miner.isPlayer ? AppTheme.cyanNeon : AppTheme.textSecondary,
+                                color: miner.isPlayer
+                                    ? AppTheme.cyanNeon
+                                    : AppTheme.textSecondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -886,7 +945,9 @@ class _MinersScreenState extends State<MinersScreen> {
                                 style: GoogleFonts.chakraPetch(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w900,
-                                  color: miner.isPlayer ? AppTheme.bitcoinGold : AppTheme.textPrimary,
+                                  color: miner.isPlayer
+                                      ? AppTheme.bitcoinGold
+                                      : AppTheme.textPrimary,
                                 ),
                               ),
                             ],
@@ -904,7 +965,11 @@ class _MinersScreenState extends State<MinersScreen> {
                         ],
                       ),
                       const SizedBox(width: 6),
-                      const Icon(Icons.chevron_right, size: 16, color: AppTheme.textMuted),
+                      const Icon(
+                        Icons.chevron_right,
+                        size: 16,
+                        color: AppTheme.textMuted,
+                      ),
                     ],
                   ),
                 ),
@@ -933,7 +998,9 @@ class _MinersScreenState extends State<MinersScreen> {
                 : AppTheme.surfaceSecondary,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isSelected ? AppTheme.cyanNeon : AppTheme.surfaceBorderSubtle,
+              color: isSelected
+                  ? AppTheme.cyanNeon
+                  : AppTheme.surfaceBorderSubtle,
               width: isSelected ? 1.6 : 1.0,
             ),
           ),
@@ -1011,7 +1078,9 @@ class _MinersScreenState extends State<MinersScreen> {
                   pedestalColor.withValues(alpha: 0.12),
                 ],
               ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(10),
+              ),
               border: Border.all(color: pedestalColor, width: 1.5),
               boxShadow: [
                 BoxShadow(

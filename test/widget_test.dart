@@ -130,6 +130,8 @@ void main() {
     ));
     await tester.pump();
     expect(find.byType(ArcadeScreen), findsOneWidget);
+    expect(find.text('30s'), findsWidgets);
+    expect(find.byType(Image), findsWidgets);
 
     // Test MarketScreen
     await tester.pumpWidget(MaterialApp(
@@ -160,6 +162,14 @@ void main() {
     final state = GameState();
 
     expect(MiniGamesCatalog.allGames.length, equals(30));
+
+    // Verify all 30 games have valid image assets and time badges
+    for (final game in MiniGamesCatalog.allGames) {
+      expect(game.playTime, isNotEmpty);
+      expect(game.imageAsset, isNotEmpty);
+      expect(game.imageAsset, startsWith('assets/images/games/'));
+      expect(game.imageAsset, endsWith('.png'));
+    }
 
     // Test first 4 original games
     await tester.pumpWidget(MaterialApp(

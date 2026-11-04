@@ -363,7 +363,8 @@ class _ArcadeScreenState extends State<ArcadeScreen> with TickerProviderStateMix
                 child: _buildAnimatedGameCard(
                   context: context,
                   title: game.title,
-                  subtitle: game.subtitle,
+                  playTime: game.playTime,
+                  imageAsset: game.imageAsset,
                   tag: game.tag,
                   tagColor: game.tagColor,
                   icon: game.icon,
@@ -446,7 +447,8 @@ class _ArcadeScreenState extends State<ArcadeScreen> with TickerProviderStateMix
   Widget _buildAnimatedGameCard({
     required BuildContext context,
     required String title,
-    required String subtitle,
+    required String playTime,
+    required String imageAsset,
     required String tag,
     required Color tagColor,
     required String icon,
@@ -538,27 +540,38 @@ class _ArcadeScreenState extends State<ArcadeScreen> with TickerProviderStateMix
                 ),
                 const SizedBox(height: 14),
 
-                // Center Icon and Details (Big visual avatar)
+                // Center Game Image Cover and Details (NO description needed, ONLY time of the game)
                 Row(
                   children: [
-                    // Giant 62px Game Icon Ring with Glow
+                    // High-Impact Game Cover Image (72x72)
                     Container(
-                      width: 62,
-                      height: 62,
+                      width: 72,
+                      height: 72,
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppTheme.surfaceSecondary,
+                        borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: borderColor, width: 2.0),
                         boxShadow: [
                           BoxShadow(
                             color: borderColor.withValues(alpha: 0.45),
-                            blurRadius: 14,
+                            blurRadius: 12,
                             spreadRadius: 1,
                           ),
                         ],
                       ),
-                      child: Center(
-                        child: Text(icon, style: const TextStyle(fontSize: 34)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          imageAsset,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppTheme.surfaceSecondary,
+                              child: Center(
+                                child: Text(icon, style: const TextStyle(fontSize: 34)),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -571,7 +584,7 @@ class _ArcadeScreenState extends State<ArcadeScreen> with TickerProviderStateMix
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.chakraPetch(
-                              fontSize: 18,
+                              fontSize: 17,
                               fontWeight: FontWeight.w900,
                               color: AppTheme.textPrimary,
                               letterSpacing: 0.8,
@@ -583,15 +596,32 @@ class _ArcadeScreenState extends State<ArcadeScreen> with TickerProviderStateMix
                               ],
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.chakraPetch(
-                              fontSize: 12,
-                              color: AppTheme.textSecondary,
-                              fontWeight: FontWeight.w700,
+                          const SizedBox(height: 6),
+                          // Time of the game badge (ONLY time, no description)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.45),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: AppTheme.cyanNeon.withValues(alpha: 0.5),
+                                width: 1.2,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('⏱️ ', style: TextStyle(fontSize: 12)),
+                                Text(
+                                  playTime,
+                                  style: GoogleFonts.chakraPetch(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppTheme.cyanNeon,
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

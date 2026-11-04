@@ -14,7 +14,8 @@ class TasksScreen extends StatefulWidget {
   State<TasksScreen> createState() => _TasksScreenState();
 }
 
-class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStateMixin {
+class _TasksScreenState extends State<TasksScreen>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _pulseController;
 
   @override
@@ -39,9 +40,13 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
     return ListenableBuilder(
       listenable: widget.gameState,
       builder: (context, _) {
-        final completedTasks = widget.gameState.dailyQuests.where((q) => q.isCompleted).length;
+        final completedTasks = widget.gameState.dailyQuests
+            .where((q) => q.isCompleted)
+            .length;
         final totalTasks = widget.gameState.dailyQuests.length;
-        final hasClaimable = widget.gameState.dailyQuests.any((q) => q.isCompleted && !q.isClaimed);
+        final hasClaimable = widget.gameState.dailyQuests.any(
+          (q) => q.isCompleted && !q.isClaimed,
+        );
 
         return ListView(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -73,7 +78,10 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                     decoration: BoxDecoration(
                       color: AppTheme.surfaceSecondary,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppTheme.purpleQuantum, width: 1.8),
+                      border: Border.all(
+                        color: AppTheme.purpleQuantum,
+                        width: 1.8,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: AppTheme.purpleQuantum.withValues(alpha: 0.4),
@@ -127,11 +135,16 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.greenHash.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.greenHash.withValues(alpha: 0.6)),
+                      border: Border.all(
+                        color: AppTheme.greenHash.withValues(alpha: 0.6),
+                      ),
                     ),
                     child: Column(
                       children: [
@@ -189,11 +202,16 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: AppTheme.bitcoinGold.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: AppTheme.bitcoinGold.withValues(alpha: 0.6)),
+                          border: Border.all(
+                            color: AppTheme.bitcoinGold.withValues(alpha: 0.6),
+                          ),
                         ),
                         child: Text(
                           'REFRESHES DAILY',
@@ -215,14 +233,19 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: canClaim
                             ? AppTheme.bitcoinGold.withValues(alpha: 0.12)
                             : AppTheme.surfaceSecondary,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: canClaim ? AppTheme.bitcoinGold : AppTheme.surfaceBorderSubtle,
+                          color: canClaim
+                              ? AppTheme.bitcoinGold
+                              : AppTheme.surfaceBorderSubtle,
                           width: canClaim ? 1.8 : 1.0,
                         ),
                       ),
@@ -231,11 +254,15 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                           Icon(
                             isClaimed
                                 ? Icons.check_circle_rounded
-                                : (quest.isCompleted ? Icons.stars_rounded : Icons.radio_button_unchecked),
+                                : (quest.isCompleted
+                                      ? Icons.stars_rounded
+                                      : Icons.radio_button_unchecked),
                             size: 22,
                             color: isClaimed
                                 ? AppTheme.greenHash
-                                : (canClaim ? AppTheme.bitcoinGold : AppTheme.textMuted),
+                                : (canClaim
+                                      ? AppTheme.bitcoinGold
+                                      : AppTheme.textMuted),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -281,7 +308,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                                     AudioService.instance.playCoinPickup();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        duration: const Duration(milliseconds: 700),
+                                        duration: const Duration(
+                                          milliseconds: 700,
+                                        ),
                                         backgroundColor: AppTheme.surface,
                                         content: Text(
                                           'BOUNTY CLAIMED: +${quest.rewardSatoshis.toInt()} SATOSHIS! 🪙',
@@ -296,7 +325,10 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                                   }
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 7,
+                                  ),
                                   decoration: AppTheme.gameButtonDecoration(
                                     color: AppTheme.bitcoinGold,
                                     borderRadius: 8,
@@ -315,9 +347,14 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                             )
                           else if (isClaimed)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: AppTheme.greenHash.withValues(alpha: 0.15),
+                                color: AppTheme.greenHash.withValues(
+                                  alpha: 0.15,
+                                ),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -331,11 +368,16 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                             )
                           else
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppTheme.surfaceLight,
                                 borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: AppTheme.surfaceBorder),
+                                border: Border.all(
+                                  color: AppTheme.surfaceBorder,
+                                ),
                               ),
                               child: Text(
                                 '+${quest.rewardSatoshis.toInt()} SAT',
@@ -384,8 +426,14 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: AppTheme.badgeDecoration(color: AppTheme.richRuby, borderRadius: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: AppTheme.badgeDecoration(
+                          color: AppTheme.richRuby,
+                          borderRadius: 6,
+                        ),
                         child: Text(
                           'STREAK: DAY 1',
                           style: GoogleFonts.chakraPetch(
@@ -402,65 +450,85 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: [100, 250, 500, 1000, 2500, 5000, 15000].asMap().entries.map((entry) {
-                        final day = entry.key + 1;
-                        final reward = entry.value;
-                        final isToday = day == 1;
+                      children: [100, 250, 500, 1000, 2500, 5000, 15000]
+                          .asMap()
+                          .entries
+                          .map((entry) {
+                            final day = entry.key + 1;
+                            final reward = entry.value;
+                            final isToday = day == 1;
 
-                        return Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: isToday
-                                  ? [const Color(0xFF2E2218), const Color(0xFF1A1208)]
-                                  : [AppTheme.surfaceLight, AppTheme.surfaceSecondary],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isToday ? AppTheme.bitcoinGold : AppTheme.surfaceBorder,
-                              width: isToday ? 2.0 : 1.0,
-                            ),
-                            boxShadow: isToday
-                                ? [
-                                    BoxShadow(
-                                      color: AppTheme.bitcoinGold.withValues(alpha: 0.35),
-                                      blurRadius: 10,
+                            return Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: isToday
+                                      ? [
+                                          const Color(0xFF2E2218),
+                                          const Color(0xFF1A1208),
+                                        ]
+                                      : [
+                                          AppTheme.surfaceLight,
+                                          AppTheme.surfaceSecondary,
+                                        ],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: isToday
+                                      ? AppTheme.bitcoinGold
+                                      : AppTheme.surfaceBorder,
+                                  width: isToday ? 2.0 : 1.0,
+                                ),
+                                boxShadow: isToday
+                                    ? [
+                                        BoxShadow(
+                                          color: AppTheme.bitcoinGold
+                                              .withValues(alpha: 0.35),
+                                          blurRadius: 10,
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'DAY $day',
+                                    style: GoogleFonts.chakraPetch(
+                                      fontSize: 10.5,
+                                      color: isToday
+                                          ? AppTheme.bitcoinGold
+                                          : AppTheme.textSecondary,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.5,
                                     ),
-                                  ]
-                                : null,
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                'DAY $day',
-                                style: GoogleFonts.chakraPetch(
-                                  fontSize: 10.5,
-                                  color: isToday ? AppTheme.bitcoinGold : AppTheme.textSecondary,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 0.5,
-                                ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    day == 7 ? '🎁' : '🪙',
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    format.format(reward),
+                                    style: GoogleFonts.chakraPetch(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w900,
+                                      color: isToday
+                                          ? const Color(0xFFFFD54F)
+                                          : AppTheme.textPrimary,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                day == 7 ? '🎁' : '🪙',
-                                style: const TextStyle(fontSize: 22),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                format.format(reward),
-                                style: GoogleFonts.chakraPetch(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w900,
-                                  color: isToday ? const Color(0xFFFFD54F) : AppTheme.textPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                            );
+                          })
+                          .toList(),
                     ),
                   ),
                 ],
@@ -484,7 +552,10 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppTheme.surfaceSecondary,
-                      border: Border.all(color: AppTheme.cyanNeon.withValues(alpha: 0.6), width: 1.5),
+                      border: Border.all(
+                        color: AppTheme.cyanNeon.withValues(alpha: 0.6),
+                        width: 1.5,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: AppTheme.cyanNeon.withValues(alpha: 0.3),
@@ -541,7 +612,10 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                       );
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 9,
+                      ),
                       decoration: AppTheme.gameButtonDecoration(
                         color: AppTheme.cyanNeon,
                         borderRadius: 10,
@@ -594,7 +668,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(14),
                 decoration: AppTheme.cyberCardDecoration(
-                  borderColor: isClaimable ? AppTheme.greenHash : AppTheme.surfaceBorder,
+                  borderColor: isClaimable
+                      ? AppTheme.greenHash
+                      : AppTheme.surfaceBorder,
                   glowColor: isClaimable ? AppTheme.greenHash : null,
                 ),
                 child: Row(
@@ -641,7 +717,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                                 value: quest.progress,
                                 backgroundColor: Colors.transparent,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  quest.isCompleted ? AppTheme.greenHash : AppTheme.cyanNeon,
+                                  quest.isCompleted
+                                      ? AppTheme.greenHash
+                                      : AppTheme.cyanNeon,
                                 ),
                               ),
                             ),
@@ -651,7 +729,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                             '${quest.currentValue.toInt()} / ${quest.targetValue.toInt()} (${(quest.progress * 100).toInt()}%)',
                             style: GoogleFonts.chakraPetch(
                               fontSize: 10.5,
-                              color: isClaimable ? AppTheme.greenHash : AppTheme.textMuted,
+                              color: isClaimable
+                                  ? AppTheme.greenHash
+                                  : AppTheme.textMuted,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -670,7 +750,10 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                           : null,
                       child: Container(
                         width: 94,
-                        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 6),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 9,
+                          horizontal: 6,
+                        ),
                         decoration: isClaimable
                             ? AppTheme.gameButtonDecoration(
                                 color: AppTheme.greenHash,
@@ -679,7 +762,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                             : BoxDecoration(
                                 color: AppTheme.surfaceSecondary,
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: AppTheme.surfaceBorderSubtle),
+                                border: Border.all(
+                                  color: AppTheme.surfaceBorderSubtle,
+                                ),
                               ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -693,7 +778,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                                 fontWeight: FontWeight.w900,
                                 color: isClaimable
                                     ? Colors.black
-                                    : (quest.isClaimed ? AppTheme.greenHash : AppTheme.textMuted),
+                                    : (quest.isClaimed
+                                          ? AppTheme.greenHash
+                                          : AppTheme.textMuted),
                                 letterSpacing: 0.8,
                               ),
                             ),
@@ -706,7 +793,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                                 style: GoogleFonts.chakraPetch(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
-                                  color: isClaimable ? Colors.black : AppTheme.textMuted,
+                                  color: isClaimable
+                                      ? Colors.black
+                                      : AppTheme.textMuted,
                                 ),
                               ),
                             ],
@@ -724,4 +813,3 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
     );
   }
 }
-
