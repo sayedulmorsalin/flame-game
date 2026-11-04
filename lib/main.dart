@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'game/btminer_game.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'models/game_state.dart';
 import 'services/audio_service.dart';
 import 'services/storage_service.dart';
@@ -9,16 +10,14 @@ import 'ui/theme/app_theme.dart';
 import 'ui/widgets/top_hud.dart';
 import 'ui/widgets/offline_earnings_dialog.dart';
 import 'ui/widgets/airdrop_modal.dart';
-import 'ui/screens/mine_screen.dart';
 import 'ui/screens/arcade_screen.dart';
-import 'ui/screens/rigs_screen.dart';
 import 'ui/screens/miners_screen.dart';
-import 'ui/screens/market_screen.dart';
 import 'ui/screens/vault_screen.dart';
-import 'ui/screens/quests_screen.dart';
+import 'ui/screens/tasks_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = true;
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -50,11 +49,10 @@ class GameMainScreen extends StatefulWidget {
 
 class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObserver {
   late final GameState gameState;
-  late final BTMinerGame flameGame;
-  late final Widget mineScreen;
-  int currentTabIndex = 0;
+  int currentTabIndex = 0; // Starts at Games Arcade screen
+  Timer? gameTickTimer;
+  Timer? airdropTimer;
   Timer? autoSaveTimer;
-  Timer? marketTimer;
 
   @override
   void initState() {
@@ -63,36 +61,26 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
 
     gameState = GameState();
 
-    flameGame = BTMinerGame(
-      gameState: gameState,
-      onAirdropClaimed: (rewardData) {
-        _showAirdropDialog(rewardData);
-      },
-    );
-
-    // Cache MineScreen so FlameGame canvas surface is never re-created
-    mineScreen = MineScreen(
-      game: flameGame,
-      gameState: gameState,
-      onManualTap: () {
-        gameState.manualTap();
-        AudioService.instance.playTap();
-      },
-      onOpenArcade: () {
-        setState(() => currentTabIndex = 1);
-      },
-    );
-
     _initSaveAndOffline();
+
+    // Background idle tick (power drain, auto-tapper, boost & frenzy countdowns)
+    gameTickTimer = Timer.periodic(const Duration(milliseconds: 200), (_) {
+      gameState.idleTick(0.2);
+    });
+
+    // Occasional surprise airdrop crates
+    airdropTimer = Timer.periodic(const Duration(seconds: 50), (_) {
+      if (!mounted) return;
+      if (Random().nextBool()) {
+        final reward = gameState.claimAirdropCrate();
+        AudioService.instance.playAirdrop();
+        _showAirdropDialog(reward);
+      }
+    });
 
     // Auto-save game state every 10 seconds
     autoSaveTimer = Timer.periodic(const Duration(seconds: 10), (_) {
       StorageService.saveGame(gameState);
-    });
-
-    // Market price tick every 8 seconds
-    marketTimer = Timer.periodic(const Duration(seconds: 8), (_) {
-      gameState.tickMarket();
     });
   }
 
@@ -151,8 +139,9 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    gameTickTimer?.cancel();
+    airdropTimer?.cancel();
     autoSaveTimer?.cancel();
-    marketTimer?.cancel();
     super.dispose();
   }
 
@@ -160,71 +149,123 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('⚡ ', style: TextStyle(fontSize: 18)),
-            RichText(
-              text: const TextSpan(
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: 0.8),
-                children: [
-                  TextSpan(text: 'BITCOIN ', style: TextStyle(color: AppTheme.textPrimary)),
-                  TextSpan(text: 'MINER', style: TextStyle(color: AppTheme.richRuby)),
-                ],
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFF141A2E),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.surfaceBorder, width: 1.5),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x60000000),
+                blurRadius: 8,
+                offset: Offset(0, 2),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: AppTheme.goldGradient,
+                ),
+                child: const Center(
+                  child: Text('⚡', style: TextStyle(fontSize: 14)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              RichText(
+                text: TextSpan(
+                  style: GoogleFonts.chakraPetch(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'BITCOIN ',
+                      style: TextStyle(
+                        color: AppTheme.bitcoinGold,
+                        shadows: [
+                          Shadow(
+                            color: AppTheme.bitcoinGold.withValues(alpha: 0.6),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'MINER',
+                      style: TextStyle(
+                        color: AppTheme.cyanNeon,
+                        shadows: [
+                          Shadow(
+                            color: AppTheme.cyanNeon.withValues(alpha: 0.6),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
-          // Quick Games Arcade Shortcut
-          IconButton(
-            tooltip: 'Arcade Mini-Games',
-            icon: const Icon(Icons.sports_esports_outlined, color: AppTheme.richRuby),
-            onPressed: () {
-              setState(() => currentTabIndex = 1);
-            },
-          ),
-          // Quests & Missions Shortcut
+          // Tasks & Bounties Shortcut with Arcade Badge
           ListenableBuilder(
             listenable: gameState,
             builder: (context, _) {
               final hasClaimable = gameState.dailyQuests.any((q) => q.isCompleted && !q.isClaimed);
               return IconButton(
-                tooltip: 'Missions & Streaks',
+                tooltip: 'Tasks & Bounties',
                 icon: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    const Icon(Icons.assignment_turned_in_outlined, color: AppTheme.cyanNeon),
+                    const Icon(Icons.task_alt, color: AppTheme.cyanNeon, size: 24),
                     if (hasClaimable)
                       Positioned(
-                        right: -2,
-                        top: -2,
+                        right: -3,
+                        top: -3,
                         child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
                             color: AppTheme.richRuby,
                             shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 1.5),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.richRuby.withValues(alpha: 0.8),
+                                blurRadius: 6,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                   ],
                 ),
                 onPressed: () {
-                  setState(() => currentTabIndex = 6);
+                  setState(() => currentTabIndex = 2);
                 },
               );
             },
           ),
-          // Sound Mute Toggle
+          // Sound Mute Toggle with Arcade Glow
           ListenableBuilder(
             listenable: gameState,
             builder: (context, _) {
               return IconButton(
                 tooltip: 'Sound FX',
                 icon: Icon(
-                  gameState.soundEnabled ? Icons.volume_up : Icons.volume_off,
+                  gameState.soundEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded,
                   color: gameState.soundEnabled ? AppTheme.bitcoinGold : AppTheme.textMuted,
+                  size: 24,
                 ),
                 onPressed: () {
                   gameState.toggleSound();
@@ -233,11 +274,12 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
               );
             },
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: Column(
         children: [
-          // Real-time Top HUD (ListenableBuilder updates only the HUD without rebuilding the Flame canvas)
+          // Real-time Top Arcade HUD
           ListenableBuilder(
             listenable: gameState,
             builder: (context, _) => TopHud(
@@ -248,18 +290,15 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
               },
             ),
           ),
-          // Preserved Tab Views via IndexedStack
+          // Preserved Tab Views via IndexedStack: Games is primary screen
           Expanded(
             child: IndexedStack(
               index: currentTabIndex,
               children: [
-                mineScreen,
                 ArcadeScreen(gameState: gameState),
-                RigsScreen(gameState: gameState),
                 MinersScreen(gameState: gameState),
-                MarketScreen(gameState: gameState),
+                TasksScreen(gameState: gameState),
                 VaultScreen(gameState: gameState),
-                QuestsScreen(gameState: gameState),
               ],
             ),
           ),
@@ -269,29 +308,26 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
         decoration: const BoxDecoration(
           color: AppTheme.surface,
           border: Border(
-            top: BorderSide(color: AppTheme.surfaceBorder, width: 1.0),
+            top: BorderSide(color: AppTheme.surfaceBorder, width: 2.0),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x90000000),
+              blurRadius: 16,
+              offset: Offset(0, -4),
+            ),
+          ],
         ),
         child: BottomNavigationBar(
-          currentIndex: currentTabIndex > 5 ? 0 : currentTabIndex,
+          currentIndex: currentTabIndex,
           onTap: (index) {
             setState(() => currentTabIndex = index);
           },
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.videogame_asset_outlined),
-              activeIcon: Icon(Icons.videogame_asset, color: AppTheme.richRuby),
-              label: 'Mine',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.sports_esports_outlined),
-              activeIcon: Icon(Icons.sports_esports, color: AppTheme.orangeFrenzy),
+              activeIcon: Icon(Icons.sports_esports, color: AppTheme.cyanNeon),
               label: 'Games',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.memory_outlined),
-              activeIcon: Icon(Icons.memory, color: AppTheme.cyanNeon),
-              label: 'Rigs',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.engineering_outlined),
@@ -299,9 +335,9 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
               label: 'Miners',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.trending_up_outlined),
-              activeIcon: Icon(Icons.trending_up, color: AppTheme.greenHash),
-              label: 'Market',
+              icon: Icon(Icons.task_alt_outlined),
+              activeIcon: Icon(Icons.task_alt, color: AppTheme.greenHash),
+              label: 'Task',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.lock_outline),

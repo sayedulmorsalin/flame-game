@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 
 class AirdropModal extends StatelessWidget {
@@ -49,56 +50,98 @@ class AirdropModal extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 44)),
-            const SizedBox(height: 10),
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.surfaceSecondary,
+                border: Border.all(color: accentColor, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.4),
+                    blurRadius: 14,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(emoji, style: const TextStyle(fontSize: 38)),
+              ),
+            ),
+            const SizedBox(height: 12),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
+              style: GoogleFonts.chakraPetch(
+                fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: accentColor,
-                letterSpacing: 1.0,
+                letterSpacing: 1.2,
+                shadows: [
+                  Shadow(
+                    color: accentColor.withValues(alpha: 0.5),
+                    blurRadius: 10,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Airdrop drone intercepted successfully! You unlocked:',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12.5, color: AppTheme.textSecondary),
+              style: GoogleFonts.chakraPetch(
+                fontSize: 12.5,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 16),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceLight,
+                color: AppTheme.surfaceSecondary,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: accentColor.withValues(alpha: 0.4)),
+                border: Border.all(color: accentColor.withValues(alpha: 0.6), width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                  ),
+                ],
               ),
               child: Text(
                 contentText,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
+                style: GoogleFonts.chakraPetch(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
                   color: accentColor,
+                  letterSpacing: 0.8,
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: onDismiss,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  elevation: 2,
+            GestureDetector(
+              onTap: onDismiss,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                decoration: AppTheme.gameButtonDecoration(
+                  color: accentColor,
+                  borderRadius: 10,
                 ),
-                child: const Text('CLAIM REWARD', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                child: Center(
+                  child: Text(
+                    'CLAIM REWARD',
+                    style: GoogleFonts.chakraPetch(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                      color: Colors.black,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../models/game_state.dart';
 import '../../services/audio_service.dart';
 import '../theme/app_theme.dart';
@@ -29,9 +30,9 @@ class RigsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: AppTheme.cyberCardDecoration(
             borderColor: shaft.isUnlocked
-                ? AppTheme.surfaceBorder
-                : AppTheme.surfaceBorder.withValues(alpha: 0.6),
-            glowColor: shaft.isUnlocked ? AppTheme.richRuby : null,
+                ? AppTheme.cyanNeon
+                : AppTheme.surfaceBorder,
+            glowColor: shaft.isUnlocked ? AppTheme.cyanNeon : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,17 +42,24 @@ class RigsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 44,
-                    height: 44,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
-                      color: AppTheme.surfaceLight,
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppTheme.surfaceSecondary,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: shaft.isUnlocked ? AppTheme.richRuby : AppTheme.surfaceBorder,
+                        color: shaft.isUnlocked ? AppTheme.cyanNeon : AppTheme.surfaceBorder,
+                        width: 1.5,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: (shaft.isUnlocked ? AppTheme.cyanNeon : Colors.transparent).withValues(alpha: 0.3),
+                          blurRadius: 8,
+                        ),
+                      ],
                     ),
                     child: Center(
-                      child: Text(shaft.icon, style: const TextStyle(fontSize: 22)),
+                      child: Text(shaft.icon, style: const TextStyle(fontSize: 24)),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -61,29 +69,42 @@ class RigsScreen extends StatelessWidget {
                       children: [
                         Text(
                           shaft.name,
-                          style: const TextStyle(
+                          style: GoogleFonts.chakraPetch(
                             fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w900,
                             color: AppTheme.textPrimary,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         Text(
                           shaft.subtitle,
-                          style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                          style: GoogleFonts.chakraPetch(
+                            fontSize: 11,
+                            color: AppTheme.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Text(
-                              shaft.isUnlocked
-                                  ? 'LVL ${shaft.level}'
-                                  : 'LOCKED',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: shaft.isUnlocked
-                                    ? AppTheme.richRuby
-                                    : AppTheme.textMuted,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: AppTheme.badgeDecoration(
+                                color: shaft.isUnlocked ? AppTheme.greenHash : AppTheme.textMuted,
+                                borderRadius: 4,
+                              ),
+                              child: Text(
+                                shaft.isUnlocked
+                                    ? 'LVL ${shaft.level}'
+                                    : 'LOCKED',
+                                style: GoogleFonts.chakraPetch(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  color: shaft.isUnlocked
+                                      ? AppTheme.greenHash
+                                      : AppTheme.textMuted,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ),
                             if (shaft.isUnlocked) ...[
@@ -92,9 +113,9 @@ class RigsScreen extends StatelessWidget {
                                 child: Text(
                                   '• ⚡ ${shaft.currentHashrate >= 1000 ? "${(shaft.currentHashrate / 1000).toStringAsFixed(2)} GH/s" : "${shaft.currentHashrate.toStringAsFixed(1)} MH/s"}',
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: GoogleFonts.chakraPetch(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w900,
                                     color: AppTheme.greenHash,
                                   ),
                                 ),
@@ -112,46 +133,57 @@ class RigsScreen extends StatelessWidget {
               const Divider(color: AppTheme.surfaceBorderSubtle, height: 1),
               const SizedBox(height: 12),
 
-              // Upgrade Actions Row (Compact, responsive, zero-overflow)
+              // Upgrade Actions Row
               Row(
                 children: [
                   // Main Level Upgrade Button
                   Expanded(
                     flex: 5,
-                    child: ElevatedButton(
-                      onPressed: canAffordLevel
+                    child: GestureDetector(
+                      onTap: canAffordLevel
                           ? () {
                               if (gameState.upgradeShaft(shaft.id)) {
                                 AudioService.instance.playUpgrade();
                               }
                             }
                           : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: canAffordLevel ? AppTheme.richRuby : AppTheme.surfaceSecondary,
-                        foregroundColor: canAffordLevel ? Colors.white : AppTheme.textMuted,
-                        disabledBackgroundColor: AppTheme.surfaceSecondary,
-                        disabledForegroundColor: AppTheme.textMuted,
-                        elevation: canAffordLevel ? 2 : 0,
+                      child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            shaft.isUnlocked ? 'UPGRADE' : 'UNLOCK',
-                            style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w900),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '🪙 ${format.format(shaft.currentCost.toInt())}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                        decoration: canAffordLevel
+                            ? AppTheme.gameButtonDecoration(
+                                color: AppTheme.richRuby,
+                                borderRadius: 8,
+                              )
+                            : BoxDecoration(
+                                color: AppTheme.surfaceSecondary,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.surfaceBorderSubtle),
+                              ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              shaft.isUnlocked ? 'UPGRADE' : 'UNLOCK',
+                              style: GoogleFonts.chakraPetch(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w900,
+                                color: canAffordLevel ? Colors.white : AppTheme.textMuted,
+                                letterSpacing: 0.6,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '🪙 ${format.format(shaft.currentCost.toInt())}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.chakraPetch(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.bold,
+                                color: canAffordLevel ? const Color(0xFFFFE082) : AppTheme.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -161,45 +193,50 @@ class RigsScreen extends StatelessWidget {
                     // Cooling Fan Upgrade
                     Expanded(
                       flex: 4,
-                      child: OutlinedButton(
-                        onPressed: canAffordCooling
+                      child: GestureDetector(
+                        onTap: canAffordCooling
                             ? () {
                                 if (gameState.upgradeShaftCooling(shaft.id)) {
                                   AudioService.instance.playUpgrade();
                                 }
                               }
                             : null,
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: canAffordCooling
-                              ? AppTheme.cyanNeon.withValues(alpha: 0.08)
-                              : Colors.transparent,
-                          side: BorderSide(
-                            color: canAffordCooling ? AppTheme.cyanNeon : AppTheme.surfaceBorder,
-                          ),
+                        child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '❄️ FAN L.${shaft.coolingLevel}',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: canAffordCooling ? AppTheme.cyanNeon : AppTheme.textMuted,
+                          decoration: canAffordCooling
+                              ? AppTheme.gameButtonDecoration(
+                                  color: AppTheme.cyanNeon,
+                                  borderRadius: 8,
+                                )
+                              : BoxDecoration(
+                                  color: AppTheme.surfaceSecondary,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: AppTheme.surfaceBorderSubtle),
+                                ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '❄️ FAN L.${shaft.coolingLevel}',
+                                style: GoogleFonts.chakraPetch(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  color: canAffordCooling ? Colors.black : AppTheme.textMuted,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${format.format(coolingCost.toInt())} SAT',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 9, color: AppTheme.textSecondary),
-                            ),
-                          ],
+                              const SizedBox(height: 2),
+                              Text(
+                                '${format.format(coolingCost.toInt())} SAT',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.chakraPetch(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: canAffordCooling ? Colors.black87 : AppTheme.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -207,45 +244,50 @@ class RigsScreen extends StatelessWidget {
                     // Overclock Upgrade
                     Expanded(
                       flex: 4,
-                      child: OutlinedButton(
-                        onPressed: canAffordOverclock
+                      child: GestureDetector(
+                        onTap: canAffordOverclock
                             ? () {
                                 if (gameState.upgradeShaftOverclock(shaft.id)) {
                                   AudioService.instance.playUpgrade();
                                 }
                               }
                             : null,
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: canAffordOverclock
-                              ? AppTheme.orangeFrenzy.withValues(alpha: 0.08)
-                              : Colors.transparent,
-                          side: BorderSide(
-                            color: canAffordOverclock ? AppTheme.orangeFrenzy : AppTheme.surfaceBorder,
-                          ),
+                        child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '🔥 BOOST L.${shaft.overclockLevel}',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: canAffordOverclock ? AppTheme.orangeFrenzy : AppTheme.textMuted,
+                          decoration: canAffordOverclock
+                              ? AppTheme.gameButtonDecoration(
+                                  color: AppTheme.orangeFrenzy,
+                                  borderRadius: 8,
+                                )
+                              : BoxDecoration(
+                                  color: AppTheme.surfaceSecondary,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: AppTheme.surfaceBorderSubtle),
+                                ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '🔥 BOOST L.${shaft.overclockLevel}',
+                                style: GoogleFonts.chakraPetch(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  color: canAffordOverclock ? Colors.white : AppTheme.textMuted,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${format.format(overclockCost.toInt())} SAT',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 9, color: AppTheme.textSecondary),
-                            ),
-                          ],
+                              const SizedBox(height: 2),
+                              Text(
+                                '${format.format(overclockCost.toInt())} SAT',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.chakraPetch(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: canAffordOverclock ? const Color(0xFFFFE082) : AppTheme.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

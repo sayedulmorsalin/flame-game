@@ -1,0 +1,465 @@
+import 'package:flutter/material.dart';
+import '../../models/game_state.dart';
+import '../theme/app_theme.dart';
+import 'hash_cracker_game.dart';
+import 'coin_catcher_game.dart';
+import 'precision_drill_game.dart';
+import 'lucky_wheel_game.dart';
+import 'arcade_games_pack_1.dart';
+import 'arcade_games_pack_2.dart';
+import 'arcade_games_pack_3.dart';
+import 'arcade_games_pack_4.dart';
+
+class MiniGameMeta {
+  final String id;
+  final String title;
+  final String subtitle;
+  final String category;
+  final String icon;
+  final String tag;
+  final Color tagColor;
+  final String rewardPill;
+  final Color borderColor;
+  final String buttonText;
+  final Widget Function(BuildContext context, GameState gameState, VoidCallback onGameOver) builder;
+
+  const MiniGameMeta({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.category,
+    required this.icon,
+    required this.tag,
+    required this.tagColor,
+    required this.rewardPill,
+    required this.borderColor,
+    required this.buttonText,
+    required this.builder,
+  });
+}
+
+class MiniGamesCatalog {
+  static final List<MiniGameMeta> allGames = [
+    // 1. Hash Cracker
+    MiniGameMeta(
+      id: 'hash_cracker',
+      title: 'HASH CRACKER 9000',
+      subtitle: 'Decrypt SHA-256 Sequence • Memory Hack',
+      category: 'Puzzle',
+      icon: '🧠',
+      tag: 'POPULAR',
+      tagColor: AppTheme.purpleQuantum,
+      rewardPill: 'UP TO 500 SAT',
+      borderColor: AppTheme.purpleQuantum,
+      buttonText: 'HACK',
+      builder: (ctx, state, onOver) => HashCrackerGame(gameState: state, onGameOver: onOver),
+    ),
+    // 2. Coin Catcher
+    MiniGameMeta(
+      id: 'coin_catcher',
+      title: 'BITCOIN CATCHER 2D',
+      subtitle: 'Catch Falling Crypto • Dodge Red Malware',
+      category: 'Action',
+      icon: '⚡',
+      tag: 'FAST ACTION',
+      tagColor: AppTheme.greenHash,
+      rewardPill: 'UNLIMITED EARNINGS',
+      borderColor: AppTheme.greenHash,
+      buttonText: 'PLAY',
+      builder: (ctx, state, onOver) => CoinCatcherGame(gameState: state, onGameOver: onOver),
+    ),
+    // 3. Precision Drill
+    MiniGameMeta(
+      id: 'precision_drill',
+      title: 'PRECISION CORE DRILL',
+      subtitle: 'Hit Sweet Spot • Bullseye Crits',
+      category: 'Reflex',
+      icon: '⛏️',
+      tag: 'HIGH SKILL',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: '200 SAT CRITS',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'DRILL',
+      builder: (ctx, state, onOver) => PrecisionDrillGame(gameState: state, onGameOver: onOver),
+    ),
+    // 4. Lucky Wheel
+    MiniGameMeta(
+      id: 'lucky_wheel',
+      title: 'QUANTUM LUCKY WHEEL',
+      subtitle: 'Spin Decentralized Node • Mega Jackpot',
+      category: 'Casino',
+      icon: '🎡',
+      tag: 'DAILY SPINNER',
+      tagColor: AppTheme.bitcoinGold,
+      rewardPill: '1,500 SAT JACKPOT',
+      borderColor: AppTheme.bitcoinGold,
+      buttonText: 'SPIN',
+      builder: (ctx, state, onOver) => LuckyWheelGame(gameState: state, onGameOver: onOver),
+    ),
+    // 5. Flappy Miner
+    MiniGameMeta(
+      id: 'flappy_miner',
+      title: 'FLAPPY CRYPTO DRONE',
+      subtitle: 'Fly Through High-Voltage Firewalls',
+      category: 'Action',
+      icon: '🛸',
+      tag: 'RETRO ARCADE',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: '25 SAT / GATE',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'FLY',
+      builder: (ctx, state, onOver) => FlappyMinerGame(gameState: state, onGameOver: onOver),
+    ),
+    // 6. Block Slicer
+    MiniGameMeta(
+      id: 'block_slicer',
+      title: 'BLOCK SLICER 3000',
+      subtitle: 'Swipe & Slash Crypto • Avoid Bombs',
+      category: 'Action',
+      icon: '⚔️',
+      tag: 'REFLEX ACTION',
+      tagColor: AppTheme.richRuby,
+      rewardPill: '50 SAT / SLICE',
+      borderColor: AppTheme.richRuby,
+      buttonText: 'SLASH',
+      builder: (ctx, state, onOver) => BlockSlicerGame(gameState: state, onGameOver: onOver),
+    ),
+    // 7. Whack-A-Bug
+    MiniGameMeta(
+      id: 'whack_a_bug',
+      title: 'SERVER WHACK-A-BUG',
+      subtitle: 'Whack Malware Bugs Before Server Crashes',
+      category: 'Reflex',
+      icon: '👾',
+      tag: 'RAPID TAP',
+      tagColor: AppTheme.orangeFrenzy,
+      rewardPill: '40 SAT / BUG',
+      borderColor: AppTheme.orangeFrenzy,
+      buttonText: 'WHACK',
+      builder: (ctx, state, onOver) => WhackABugGame(gameState: state, onGameOver: onOver),
+    ),
+    // 8. Crypto Snake
+    MiniGameMeta(
+      id: 'crypto_snake',
+      title: 'CRYPTO SNAKE CLASSIC',
+      subtitle: 'Slither & Eat Satoshis Without Crashing',
+      category: 'Retro',
+      icon: '🐍',
+      tag: 'RETRO 90S',
+      tagColor: AppTheme.greenHash,
+      rewardPill: '30 SAT / COIN',
+      borderColor: AppTheme.greenHash,
+      buttonText: 'SLITHER',
+      builder: (ctx, state, onOver) => CryptoSnakeGame(gameState: state, onGameOver: onOver),
+    ),
+    // 9. Cyber Pong
+    MiniGameMeta(
+      id: 'cyber_pong',
+      title: 'CYBER PONG 2088',
+      subtitle: 'Neon Paddle Duel Against Neural AI',
+      category: 'Retro',
+      icon: '🏓',
+      tag: 'PADDLE BATTLE',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: '250 SAT VICTORY',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'BATTLE',
+      builder: (ctx, state, onOver) => CyberPongGame(gameState: state, onGameOver: onOver),
+    ),
+    // 10. Memory Card Match
+    MiniGameMeta(
+      id: 'memory_match',
+      title: 'NODE MEMORY MATRIX',
+      subtitle: 'Match 8 Pairs Of Cryptographic Symbols',
+      category: 'Puzzle',
+      icon: '🧩',
+      tag: 'BRAIN TRAIN',
+      tagColor: AppTheme.purpleQuantum,
+      rewardPill: 'UP TO 300 SAT',
+      borderColor: AppTheme.purpleQuantum,
+      buttonText: 'MATCH',
+      builder: (ctx, state, onOver) => MemoryCardGame(gameState: state, onGameOver: onOver),
+    ),
+    // 11. Brick Breaker
+    MiniGameMeta(
+      id: 'brick_breaker',
+      title: 'MINING BRICK BREAKER',
+      subtitle: 'Shatter Hash Blocks With Laser Ball',
+      category: 'Retro',
+      icon: '🧱',
+      tag: 'BREAKOUT',
+      tagColor: AppTheme.bitcoinGold,
+      rewardPill: '400+ SAT BONUS',
+      borderColor: AppTheme.bitcoinGold,
+      buttonText: 'SMASH',
+      builder: (ctx, state, onOver) => MiningBrickBreakerGame(gameState: state, onGameOver: onOver),
+    ),
+    // 12. Falling Matrix Decoder
+    MiniGameMeta(
+      id: 'matrix_decoder',
+      title: 'MATRIX HASH DECODER',
+      subtitle: 'Identify & Match Hexadecimal Byte Keys',
+      category: 'Puzzle',
+      icon: '💻',
+      tag: 'HACKER',
+      tagColor: AppTheme.greenHash,
+      rewardPill: '40 SAT / HASH',
+      borderColor: AppTheme.greenHash,
+      buttonText: 'DECODE',
+      builder: (ctx, state, onOver) => FallingMatrixGame(gameState: state, onGameOver: onOver),
+    ),
+    // 13. Crypto Jump
+    MiniGameMeta(
+      id: 'crypto_jump',
+      title: 'CRYPTO JUMP CLIMBER',
+      subtitle: 'Bounce Higher Across Floating Server Nodes',
+      category: 'Action',
+      icon: '🚀',
+      tag: 'DOODLE HOP',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: 'ALTITUDE MULTIPLIER',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'JUMP',
+      builder: (ctx, state, onOver) => CryptoJumpGame(gameState: state, onGameOver: onOver),
+    ),
+    // 14. Laser Defense
+    MiniGameMeta(
+      id: 'laser_defense',
+      title: 'CYBER VAULT LASER DEFENSE',
+      subtitle: 'Blast Inbound Missiles Before Rig Damage',
+      category: 'Action',
+      icon: '🛡️',
+      tag: 'TURRET SHOOTER',
+      tagColor: AppTheme.richRuby,
+      rewardPill: '35 SAT / MISSILE',
+      borderColor: AppTheme.richRuby,
+      buttonText: 'DEFEND',
+      builder: (ctx, state, onOver) => LaserDefenseGame(gameState: state, onGameOver: onOver),
+    ),
+    // 15. Pipe Connection Puzzle
+    MiniGameMeta(
+      id: 'pipe_connection',
+      title: 'GPU COOLANT PIPE MATRIX',
+      subtitle: 'Align Coolant Lines For Maximum Hashrate',
+      category: 'Puzzle',
+      icon: '🔧',
+      tag: 'PIPELINE',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: '220 SAT SOLVED',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'CONNECT',
+      builder: (ctx, state, onOver) => PipeConnectionGame(gameState: state, onGameOver: onOver),
+    ),
+    // 16. Color Switch Orbit
+    MiniGameMeta(
+      id: 'color_switch',
+      title: 'COLOR SWITCH ORBIT',
+      subtitle: 'Pass Through Matching Orbital Ring Shields',
+      category: 'Reflex',
+      icon: '⭕',
+      tag: 'COLOR TIMING',
+      tagColor: AppTheme.purpleQuantum,
+      rewardPill: '50 SAT / RING',
+      borderColor: AppTheme.purpleQuantum,
+      buttonText: 'ORBIT',
+      builder: (ctx, state, onOver) => ColorSwitchOrbitGame(gameState: state, onGameOver: onOver),
+    ),
+    // 17. Simon Hash Tap
+    MiniGameMeta(
+      id: 'simon_tap',
+      title: 'SIMON HASH MEMORY',
+      subtitle: 'Repeat 4-Color Glowing Node Patterns',
+      category: 'Puzzle',
+      icon: '💡',
+      tag: 'SIMON SAYS',
+      tagColor: AppTheme.bitcoinGold,
+      rewardPill: '50 SAT / ROUND',
+      borderColor: AppTheme.bitcoinGold,
+      buttonText: 'REPEAT',
+      builder: (ctx, state, onOver) => CryptoSimonGame(gameState: state, onGameOver: onOver),
+    ),
+    // 18. Balance the Rig
+    MiniGameMeta(
+      id: 'balance_rig',
+      title: 'BALANCE THE MINING RIG',
+      subtitle: 'Counteract Tilting Forces On The Fulcrum',
+      category: 'Physics',
+      icon: '⚖️',
+      tag: 'EQUILIBRIUM',
+      tagColor: AppTheme.orangeFrenzy,
+      rewardPill: '20 SAT / SEC',
+      borderColor: AppTheme.orangeFrenzy,
+      buttonText: 'BALANCE',
+      builder: (ctx, state, onOver) => BalanceTheRigGame(gameState: state, onGameOver: onOver),
+    ),
+    // 19. Minecart Gold Rush
+    MiniGameMeta(
+      id: 'minecart_rush',
+      title: 'MINECART GOLD RUSH',
+      subtitle: 'Switch Tracks To Collect Golden Satoshi Nuggets',
+      category: 'Action',
+      icon: '🛒',
+      tag: 'TRACK SWITCHER',
+      tagColor: AppTheme.bitcoinGold,
+      rewardPill: '40 SAT / NUGGET',
+      borderColor: AppTheme.bitcoinGold,
+      buttonText: 'RIDE',
+      builder: (ctx, state, onOver) => MinecartGoldRushGame(gameState: state, onGameOver: onOver),
+    ),
+    // 20. Crypto Tic-Tac-Toe
+    MiniGameMeta(
+      id: 'tic_tac_toe',
+      title: 'CRYPTO TIC-TAC-TOE PRO',
+      subtitle: 'Outsmart Neural AI On A 3x3 Grid',
+      category: 'Puzzle',
+      icon: '✖️',
+      tag: 'STRATEGY',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: '180 SAT WIN',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'PLAY',
+      builder: (ctx, state, onOver) => CryptoTicTacToeGame(gameState: state, onGameOver: onOver),
+    ),
+    // 21. Space Miner Invaders
+    MiniGameMeta(
+      id: 'space_invaders',
+      title: 'SPACE MINER INVADERS',
+      subtitle: 'Blast Alien Swarms In Retro Arcade Style',
+      category: 'Retro',
+      icon: '🛸',
+      tag: 'SPACE DEFENSE',
+      tagColor: AppTheme.richRuby,
+      rewardPill: '50 SAT / ALIEN',
+      borderColor: AppTheme.richRuby,
+      buttonText: 'SHOOT',
+      builder: (ctx, state, onOver) => SpaceMinerDefenderGame(gameState: state, onGameOver: onOver),
+    ),
+    // 22. Reaction Speed Gauge
+    MiniGameMeta(
+      id: 'reaction_speed',
+      title: 'REACTION SPEED GAUGE',
+      subtitle: 'Millisecond Lightning Reflexes Test',
+      category: 'Reflex',
+      icon: '⏱️',
+      tag: 'SPEED TEST',
+      tagColor: AppTheme.greenHash,
+      rewardPill: 'UP TO 500 SAT',
+      borderColor: AppTheme.greenHash,
+      buttonText: 'TEST',
+      builder: (ctx, state, onOver) => ReactionSpeedGame(gameState: state, onGameOver: onOver),
+    ),
+    // 23. Higher or Lower BTC
+    MiniGameMeta(
+      id: 'higher_lower',
+      title: 'HIGHER OR LOWER BTC',
+      subtitle: 'Predict If Next Market Tick Is Up Or Down',
+      category: 'Casino',
+      icon: '📈',
+      tag: 'MARKET PREDICT',
+      tagColor: AppTheme.bitcoinGold,
+      rewardPill: '50 SAT / STREAK',
+      borderColor: AppTheme.bitcoinGold,
+      buttonText: 'PREDICT',
+      builder: (ctx, state, onOver) => HigherLowerCryptoGame(gameState: state, onGameOver: onOver),
+    ),
+    // 24. 2048 SAT Merge
+    MiniGameMeta(
+      id: 'merge_2048',
+      title: '2048 SAT MERGE',
+      subtitle: 'Combine Numerical Tiles To Reach 2048 SAT',
+      category: 'Puzzle',
+      icon: '🔢',
+      tag: 'SLIDE PUZZLE',
+      tagColor: AppTheme.purpleQuantum,
+      rewardPill: 'SCORE = SATOSHIS',
+      borderColor: AppTheme.purpleQuantum,
+      buttonText: 'MERGE',
+      builder: (ctx, state, onOver) => Merge2048SatGame(gameState: state, onGameOver: onOver),
+    ),
+    // 25. Cyber Rope Grapple
+    MiniGameMeta(
+      id: 'rope_grapple',
+      title: 'CYBER ROPE GRAPPLE',
+      subtitle: 'Swing Across Dark Fiber Chasm Obstacles',
+      category: 'Physics',
+      icon: '🪢',
+      tag: 'PHYSICS SWING',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: '40 SAT / SWING',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'SWING',
+      builder: (ctx, state, onOver) => CyberRopeSwingGame(gameState: state, onGameOver: onOver),
+    ),
+    // 26. Rock Paper Scissors Bot
+    MiniGameMeta(
+      id: 'rps_bot',
+      title: 'CYBER RPS SHOWDOWN',
+      subtitle: 'High-Tech Roshambo Duels Against Supercomputer',
+      category: 'Reflex',
+      icon: '✂️',
+      tag: 'CLASSIC DUEL',
+      tagColor: AppTheme.orangeFrenzy,
+      rewardPill: '60 SAT / WIN',
+      borderColor: AppTheme.orangeFrenzy,
+      buttonText: 'DUEL',
+      builder: (ctx, state, onOver) => RockPaperScissorsBotGame(gameState: state, onGameOver: onOver),
+    ),
+    // 27. Target Bullseye Archery
+    MiniGameMeta(
+      id: 'target_archery',
+      title: 'TARGET BULLSEYE ARCHERY',
+      subtitle: 'Aim Laser Crosshair At Shifting Nodes',
+      category: 'Reflex',
+      icon: '🎯',
+      tag: 'PRECISION AIM',
+      tagColor: AppTheme.bitcoinGold,
+      rewardPill: '100 SAT BULLSEYE',
+      borderColor: AppTheme.bitcoinGold,
+      buttonText: 'AIM',
+      builder: (ctx, state, onOver) => TargetArcheryGame(gameState: state, onGameOver: onOver),
+    ),
+    // 28. Cyber Runner 2D
+    MiniGameMeta(
+      id: 'cyber_runner',
+      title: 'CYBER RUNNER 2D',
+      subtitle: 'Jump Over Laser Spikes In High-Speed Sprint',
+      category: 'Action',
+      icon: '🏃',
+      tag: 'ENDLESS RUNNER',
+      tagColor: AppTheme.cyanNeon,
+      rewardPill: '30 SAT / JUMP',
+      borderColor: AppTheme.cyanNeon,
+      buttonText: 'RUN',
+      builder: (ctx, state, onOver) => CryptoRunner2DGame(gameState: state, onGameOver: onOver),
+    ),
+    // 29. Quantum Slots 777
+    MiniGameMeta(
+      id: 'quantum_slots',
+      title: 'QUANTUM SLOTS 777',
+      subtitle: 'Match 3 Crypto Symbols On Cyber Reels',
+      category: 'Casino',
+      icon: '🎰',
+      tag: 'FREE SLOTS',
+      tagColor: AppTheme.bitcoinGold,
+      rewardPill: '500 SAT JACKPOT',
+      borderColor: AppTheme.bitcoinGold,
+      buttonText: 'SPIN',
+      builder: (ctx, state, onOver) => QuantumSlotsGame(gameState: state, onGameOver: onOver),
+    ),
+    // 30. Circuit Crosser
+    MiniGameMeta(
+      id: 'circuit_crosser',
+      title: 'CIRCUIT HIGHWAY CROSSER',
+      subtitle: 'Guide Drone Across Live High-Voltage Bus Lines',
+      category: 'Action',
+      icon: '🤖',
+      tag: 'CROSSY ROAD',
+      tagColor: AppTheme.greenHash,
+      rewardPill: '150 SAT FINISH',
+      borderColor: AppTheme.greenHash,
+      buttonText: 'CROSS',
+      builder: (ctx, state, onOver) => CircuitCrosserGame(gameState: state, onGameOver: onOver),
+    ),
+  ];
+}
+

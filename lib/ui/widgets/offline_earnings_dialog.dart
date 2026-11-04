@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 
 class OfflineEarningsDialog extends StatelessWidget {
@@ -34,92 +35,148 @@ class OfflineEarningsDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Icon
+            // 3D Miner Icon Ring
             Container(
-              width: 64,
-              height: 64,
+              width: 72,
+              height: 72,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.surfaceLight,
-                border: Border.all(color: AppTheme.bitcoinGold, width: 2),
+                gradient: AppTheme.goldGradient,
+                border: Border.all(color: Colors.white, width: 2.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.bitcoinGold.withValues(alpha: 0.5),
+                    blurRadius: 16,
+                  ),
+                  const BoxShadow(
+                    color: Color(0xFF8D5300),
+                    offset: Offset(0, 4),
+                    blurRadius: 0,
+                  ),
+                ],
               ),
               child: const Center(
-                child: Text('⛏️', style: TextStyle(fontSize: 32)),
+                child: Text('⛏️', style: TextStyle(fontSize: 36)),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'WELCOME BACK MINER!',
-              style: TextStyle(
-                fontSize: 19,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.chakraPetch(
+                fontSize: 20,
                 fontWeight: FontWeight.w900,
                 color: AppTheme.textPrimary,
-                letterSpacing: 0.8,
+                letterSpacing: 1.0,
+                shadows: [
+                  Shadow(
+                    color: AppTheme.bitcoinGold.withValues(alpha: 0.4),
+                    blurRadius: 8,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 6),
             Text(
               'Your automated rigs kept mining 24/7 while you were away (${hours}h ${minutes}m):',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12.5, color: AppTheme.textSecondary),
+              style: GoogleFonts.chakraPetch(
+                fontSize: 12.5,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 16),
             // Amount
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceLight,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppTheme.surfaceBorderSubtle),
+                color: AppTheme.surfaceSecondary,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.bitcoinGold.withValues(alpha: 0.6), width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.bitcoinGold.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('🪙 ', style: TextStyle(fontSize: 20)),
+                  const Text('🪙 ', style: TextStyle(fontSize: 24)),
                   Text(
                     '+${format.format(satoshisEarned.toInt())} SAT',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.chakraPetch(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
                       color: AppTheme.bitcoinGold,
+                      letterSpacing: 0.8,
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
-            // Buttons
+            // 3D Game Push Buttons
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: onClaimNormal,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppTheme.textPrimary,
-                      side: const BorderSide(color: AppTheme.surfaceBorder),
+                  child: GestureDetector(
+                    onTap: onClaimNormal,
+                    child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceSecondary,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppTheme.surfaceBorder, width: 1.5),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0xFF0A0E1A),
+                            offset: Offset(0, 3),
+                            blurRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'CLAIM 1X',
+                          style: GoogleFonts.chakraPetch(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 13,
+                            color: AppTheme.textPrimary,
+                            letterSpacing: 0.6,
+                          ),
+                        ),
+                      ),
                     ),
-                    child: const Text('CLAIM 1X', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: onClaimDoubled,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.richRuby,
-                      foregroundColor: Colors.white,
+                  child: GestureDetector(
+                    onTap: onClaimDoubled,
+                    child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      elevation: 2,
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('⚡ '),
-                        Text('CLAIM 2X', style: TextStyle(fontWeight: FontWeight.w900)),
-                      ],
+                      decoration: AppTheme.gameButtonDecoration(
+                        color: AppTheme.richRuby,
+                        borderRadius: 10,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('⚡ ', style: TextStyle(fontSize: 14)),
+                          Text(
+                            'CLAIM 2X',
+                            style: GoogleFonts.chakraPetch(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 13,
+                              color: Colors.white,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

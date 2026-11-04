@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../models/game_state.dart';
 import '../../services/audio_service.dart';
 import '../theme/app_theme.dart';
@@ -335,34 +336,45 @@ class _MarketScreenState extends State<MarketScreen> {
                 const SizedBox(height: 14),
 
                 // Sell Action Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: widget.gameState.satoshis >= 10 && sellSatoshisAmount > 0
-                        ? () {
-                            final usd = widget.gameState.sellSatoshis(sellSatoshisAmount);
-                            AudioService.instance.playCoinPickup();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Sold Satoshis for ${currencyFormat.format(usd)} USD!'),
-                                backgroundColor: AppTheme.greenHash,
-                                duration: const Duration(seconds: 2),
+                GestureDetector(
+                  onTap: widget.gameState.satoshis >= 10 && sellSatoshisAmount > 0
+                      ? () {
+                          final usd = widget.gameState.sellSatoshis(sellSatoshisAmount);
+                          AudioService.instance.playCoinPickup();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Sold Satoshis for ${currencyFormat.format(usd)} USD!',
+                                style: GoogleFonts.chakraPetch(fontWeight: FontWeight.w900),
                               ),
-                            );
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.richRuby,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: AppTheme.surfaceSecondary,
-                      disabledForegroundColor: AppTheme.textMuted,
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      elevation: 2,
-                    ),
-                    child: const Text(
-                      'EXECUTE TRADE ORDER',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 0.6),
+                              backgroundColor: AppTheme.greenHash,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      : null,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    decoration: (widget.gameState.satoshis >= 10 && sellSatoshisAmount > 0)
+                        ? AppTheme.gameButtonDecoration(color: AppTheme.richRuby, borderRadius: 10)
+                        : BoxDecoration(
+                            color: AppTheme.surfaceSecondary,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppTheme.surfaceBorderSubtle),
+                          ),
+                    child: Center(
+                      child: Text(
+                        'EXECUTE TRADE ORDER',
+                        style: GoogleFonts.chakraPetch(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.8,
+                          color: (widget.gameState.satoshis >= 10 && sellSatoshisAmount > 0)
+                              ? Colors.white
+                              : AppTheme.textMuted,
+                        ),
+                      ),
                     ),
                   ),
                 ),

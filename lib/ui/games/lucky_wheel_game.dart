@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../models/game_state.dart';
 import '../../services/audio_service.dart';
 import '../theme/app_theme.dart';
@@ -213,27 +214,27 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                     borderColor: AppTheme.bitcoinGold,
                     glowColor: AppTheme.bitcoinGold,
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Text('🎁 ', style: TextStyle(fontSize: 24)),
-                      SizedBox(width: 10),
+                      const Text('🎁 ', style: TextStyle(fontSize: 24)),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'DECENTRALIZED NODE SPINNER',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
+                              style: GoogleFonts.chakraPetch(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w900,
                                 color: AppTheme.textPrimary,
-                                letterSpacing: 0.6,
+                                letterSpacing: 0.8,
                               ),
                             ),
-                            SizedBox(height: 2),
+                            const SizedBox(height: 2),
                             Text(
                               'Spin the wheel to win instant Satoshis, Power Battery & Frenzy Overdrive!',
-                              style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                              style: GoogleFonts.chakraPetch(fontSize: 11.5, color: AppTheme.textSecondary, fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
@@ -304,39 +305,33 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                   child: Container(
                     width: double.infinity,
                     height: 54,
-                    decoration: BoxDecoration(
-                      gradient: _isSpinning
-                          ? const LinearGradient(colors: [AppTheme.surfaceSecondary, AppTheme.surfaceSecondary])
-                          : AppTheme.goldGradient,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: _isSpinning
-                          ? null
-                          : [
-                              BoxShadow(
-                                color: AppTheme.bitcoinGold.withValues(alpha: 0.35),
-                                blurRadius: 12,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
+                    decoration: _isSpinning
+                        ? BoxDecoration(
+                            color: AppTheme.surfaceSecondary,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: AppTheme.surfaceBorderSubtle),
+                          )
+                        : AppTheme.gameButtonDecoration(
+                            color: AppTheme.bitcoinGold,
+                            borderRadius: 14,
+                          ),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            _isSpinning ? Icons.refresh : Icons.play_arrow,
-                            color: _isSpinning ? AppTheme.textMuted : Colors.white,
-                            size: 24,
+                            _isSpinning ? Icons.refresh : Icons.play_arrow_rounded,
+                            color: _isSpinning ? AppTheme.textMuted : Colors.black,
+                            size: 26,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             _isSpinning ? 'SPINNING NODE...' : 'SPIN THE WHEEL NOW!',
-                            style: TextStyle(
-                              fontSize: 15,
+                            style: GoogleFonts.chakraPetch(
+                              fontSize: 16,
                               fontWeight: FontWeight.w900,
-                              color: _isSpinning ? AppTheme.textMuted : Colors.white,
-                              letterSpacing: 0.8,
+                              color: _isSpinning ? AppTheme.textMuted : Colors.black,
+                              letterSpacing: 1.0,
                             ),
                           ),
                         ],
@@ -445,21 +440,25 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                           ),
                         ),
                         const SizedBox(height: 18),
-                        ElevatedButton(
-                          onPressed: widget.onGameOver,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.richRuby,
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            elevation: 2,
-                          ),
-                          child: const Text(
-                            'CLAIM REWARD',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 13,
-                              letterSpacing: 0.8,
+                        GestureDetector(
+                          onTap: widget.onGameOver,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: AppTheme.gameButtonDecoration(
+                              color: AppTheme.richRuby,
+                              borderRadius: 10,
+                            ),
+                            child: Center(
+                              child: Text(
+                                'CLAIM REWARD',
+                                style: GoogleFonts.chakraPetch(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
                             ),
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../models/game_state.dart';
 import '../../services/audio_service.dart';
 import '../theme/app_theme.dart';
@@ -497,33 +498,55 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                         Row(
                           children: [
                             Expanded(
-                              child: OutlinedButton(
-                                onPressed: _restartGame,
-                                style: OutlinedButton.styleFrom(
+                              child: GestureDetector(
+                                onTap: _restartGame,
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 12),
-                                  side: const BorderSide(color: AppTheme.surfaceBorder),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.surfaceSecondary,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: AppTheme.surfaceBorder, width: 1.5),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0xFF0A0E1A),
+                                        offset: Offset(0, 3),
+                                        blurRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'RETRY',
+                                      style: GoogleFonts.chakraPetch(
+                                        color: AppTheme.textPrimary,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                child: const Text('RETRY', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
                               ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
-                              child: ElevatedButton(
-                                onPressed: widget.onGameOver,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.richRuby,
-                                  foregroundColor: Colors.white,
+                              child: GestureDetector(
+                                onTap: widget.onGameOver,
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                  elevation: 2,
-                                ),
-                                child: const Text(
-                                  'COLLECT',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
+                                  decoration: AppTheme.gameButtonDecoration(
+                                    color: AppTheme.richRuby,
+                                    borderRadius: 10,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'COLLECT',
+                                      style: GoogleFonts.chakraPetch(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 13,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
