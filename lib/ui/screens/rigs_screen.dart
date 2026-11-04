@@ -7,7 +7,7 @@ import '../theme/app_theme.dart';
 class RigsScreen extends StatelessWidget {
   final GameState gameState;
 
-  const RigsScreen({Key? key, required this.gameState}) : super(key: key);
+  const RigsScreen({super.key, required this.gameState});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +30,8 @@ class RigsScreen extends StatelessWidget {
           decoration: AppTheme.cyberCardDecoration(
             borderColor: shaft.isUnlocked
                 ? AppTheme.surfaceBorder
-                : AppTheme.surfaceBorder.withOpacity(0.5),
-            glowColor: shaft.isUnlocked ? AppTheme.cyanNeon : null,
+                : AppTheme.surfaceBorder.withValues(alpha: 0.6),
+            glowColor: shaft.isUnlocked ? AppTheme.richRuby : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +47,7 @@ class RigsScreen extends StatelessWidget {
                       color: AppTheme.surfaceLight,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: shaft.isUnlocked ? AppTheme.cyanNeon : AppTheme.surfaceBorder,
+                        color: shaft.isUnlocked ? AppTheme.richRuby : AppTheme.surfaceBorder,
                       ),
                     ),
                     child: Center(
@@ -64,12 +64,12 @@ class RigsScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppTheme.textPrimary,
                           ),
                         ),
                         Text(
                           shaft.subtitle,
-                          style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                          style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                         ),
                         const SizedBox(height: 4),
                         Row(
@@ -82,18 +82,21 @@ class RigsScreen extends StatelessWidget {
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: shaft.isUnlocked
-                                    ? AppTheme.cyanNeon
+                                    ? AppTheme.richRuby
                                     : AppTheme.textMuted,
                               ),
                             ),
                             if (shaft.isUnlocked) ...[
                               const SizedBox(width: 8),
-                              Text(
-                                '•  ⚡ ${shaft.currentHashrate >= 1000 ? "${(shaft.currentHashrate / 1000).toStringAsFixed(2)} GH/s" : "${shaft.currentHashrate.toStringAsFixed(1)} MH/s"}',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.greenHash,
+                              Flexible(
+                                child: Text(
+                                  '• ⚡ ${shaft.currentHashrate >= 1000 ? "${(shaft.currentHashrate / 1000).toStringAsFixed(2)} GH/s" : "${shaft.currentHashrate.toStringAsFixed(1)} MH/s"}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.greenHash,
+                                  ),
                                 ),
                               ),
                             ],
@@ -105,11 +108,11 @@ class RigsScreen extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 14),
-              const Divider(color: AppTheme.surfaceBorder, height: 1),
+              const SizedBox(height: 12),
+              const Divider(color: AppTheme.surfaceBorderSubtle, height: 1),
               const SizedBox(height: 12),
 
-              // Upgrade Actions Row
+              // Upgrade Actions Row (Compact, responsive, zero-overflow)
               Row(
                 children: [
                   // Main Level Upgrade Button
@@ -124,21 +127,29 @@ class RigsScreen extends StatelessWidget {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: canAffordLevel ? AppTheme.bitcoinGold : AppTheme.surfaceLight,
-                        foregroundColor: canAffordLevel ? Colors.black : AppTheme.textMuted,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        backgroundColor: canAffordLevel ? AppTheme.richRuby : AppTheme.surfaceSecondary,
+                        foregroundColor: canAffordLevel ? Colors.white : AppTheme.textMuted,
+                        disabledBackgroundColor: AppTheme.surfaceSecondary,
+                        disabledForegroundColor: AppTheme.textMuted,
+                        elevation: canAffordLevel ? 2 : 0,
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            shaft.isUnlocked ? 'UPGRADE LVL' : 'UNLOCK FLOOR',
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
+                            shaft.isUnlocked ? 'UPGRADE' : 'UNLOCK',
+                            style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w900),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '🪙 ${format.format(shaft.currentCost.toInt())} SAT',
-                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                            '🪙 ${format.format(shaft.currentCost.toInt())}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -146,7 +157,7 @@ class RigsScreen extends StatelessWidget {
                   ),
 
                   if (shaft.isUnlocked) ...[
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     // Cooling Fan Upgrade
                     Expanded(
                       flex: 4,
@@ -159,16 +170,22 @@ class RigsScreen extends StatelessWidget {
                               }
                             : null,
                         style: OutlinedButton.styleFrom(
+                          backgroundColor: canAffordCooling
+                              ? AppTheme.cyanNeon.withValues(alpha: 0.08)
+                              : Colors.transparent,
                           side: BorderSide(
                             color: canAffordCooling ? AppTheme.cyanNeon : AppTheme.surfaceBorder,
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '❄️ FAN LV.${shaft.coolingLevel}',
+                              '❄️ FAN L.${shaft.coolingLevel}',
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
@@ -178,13 +195,15 @@ class RigsScreen extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               '${format.format(coolingCost.toInt())} SAT',
-                              style: const TextStyle(fontSize: 9, color: AppTheme.textMuted),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 9, color: AppTheme.textSecondary),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     // Overclock Upgrade
                     Expanded(
                       flex: 4,
@@ -197,16 +216,22 @@ class RigsScreen extends StatelessWidget {
                               }
                             : null,
                         style: OutlinedButton.styleFrom(
+                          backgroundColor: canAffordOverclock
+                              ? AppTheme.orangeFrenzy.withValues(alpha: 0.08)
+                              : Colors.transparent,
                           side: BorderSide(
                             color: canAffordOverclock ? AppTheme.orangeFrenzy : AppTheme.surfaceBorder,
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '🔥 BOOST LV.${shaft.overclockLevel}',
+                              '🔥 BOOST L.${shaft.overclockLevel}',
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
@@ -216,7 +241,9 @@ class RigsScreen extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               '${format.format(overclockCost.toInt())} SAT',
-                              style: const TextStyle(fontSize: 9, color: AppTheme.textMuted),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 9, color: AppTheme.textSecondary),
                             ),
                           ],
                         ),

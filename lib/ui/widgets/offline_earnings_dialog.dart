@@ -9,12 +9,12 @@ class OfflineEarningsDialog extends StatelessWidget {
   final VoidCallback onClaimDoubled;
 
   const OfflineEarningsDialog({
-    Key? key,
+    super.key,
     required this.satoshisEarned,
     required this.timeAway,
     required this.onClaimNormal,
     required this.onClaimDoubled,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,17 +51,17 @@ class OfflineEarningsDialog extends StatelessWidget {
             const Text(
               'WELCOME BACK MINER!',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 19,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: 1.0,
+                color: AppTheme.textPrimary,
+                letterSpacing: 0.8,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               'Your automated rigs kept mining 24/7 while you were away (${hours}h ${minutes}m):',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
+              style: const TextStyle(fontSize: 12.5, color: AppTheme.textSecondary),
             ),
             const SizedBox(height: 16),
             // Amount
@@ -70,7 +70,7 @@ class OfflineEarningsDialog extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppTheme.surfaceLight,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppTheme.surfaceBorder),
+                border: Border.all(color: AppTheme.surfaceBorderSubtle),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -95,11 +95,12 @@ class OfflineEarningsDialog extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onClaimNormal,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppTheme.textPrimary,
                       side: const BorderSide(color: AppTheme.surfaceBorder),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: const Text('CLAIM 1X'),
+                    child: const Text('CLAIM 1X', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -107,16 +108,17 @@ class OfflineEarningsDialog extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onClaimDoubled,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.bitcoinGold,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                      backgroundColor: AppTheme.richRuby,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 2,
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('⚡ '),
-                        Text('CLAIM 2X'),
+                        Text('CLAIM 2X', style: TextStyle(fontWeight: FontWeight.w900)),
                       ],
                     ),
                   ),

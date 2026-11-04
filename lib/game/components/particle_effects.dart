@@ -26,7 +26,7 @@ class ParticleEffects {
             child: ComputedParticle(
               renderer: (canvas, particle) {
                 final paint = Paint()
-                  ..color = color.withOpacity((1.0 - particle.progress).clamp(0.0, 1.0))
+                  ..color = color.withValues(alpha: (1.0 - particle.progress).clamp(0.0, 1.0))
                   ..style = PaintingStyle.fill;
                 canvas.drawCircle(
                   Offset.zero,
@@ -46,22 +46,23 @@ class ParticleEffects {
     return ParticleSystemComponent(
       position: position,
       particle: Particle.generate(
-        count: 8,
-        lifespan: 0.35,
+        count: 3,
+        lifespan: 0.28,
         generator: (i) {
-          final speed = rand.nextDouble() * 80.0 + 20.0;
-          final angle = -pi / 2 + (rand.nextDouble() * pi - pi / 2); // spray upwards
+          final speed = rand.nextDouble() * 45.0 + 15.0;
+          final angle = -pi / 2 + (rand.nextDouble() * 0.8 - 0.4);
 
           return AcceleratedParticle(
-            acceleration: Vector2(0, 180.0),
+            acceleration: Vector2(0, 120.0),
             speed: Vector2(cos(angle) * speed, sin(angle) * speed),
             child: ComputedParticle(
               renderer: (canvas, particle) {
                 final paint = Paint()
-                  ..color = const Color(0xFF00E676).withOpacity(1.0 - particle.progress)
+                  ..color = const Color(0xFFC78417).withValues(alpha: (1.0 - particle.progress).clamp(0.0, 1.0))
                   ..style = PaintingStyle.fill;
-                canvas.drawRect(
-                  Rect.fromCenter(center: Offset.zero, width: 3, height: 3),
+                canvas.drawCircle(
+                  Offset.zero,
+                  1.5 * (1.0 - particle.progress),
                   paint,
                 );
               },

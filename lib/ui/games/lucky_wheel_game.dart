@@ -142,12 +142,14 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
       parent: _spinController,
       curve: Curves.easeOutCubic,
     ))..addListener(() {
+      if (!mounted) return;
       setState(() {
         _currentAngle = _spinAnimation.value;
       });
     });
 
     _spinController.forward(from: 0.0).then((_) {
+      if (!mounted) return;
       final won = _rewards[targetIndex];
       setState(() {
         _isSpinning = false;
@@ -180,7 +182,7 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF070B14),
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         backgroundColor: AppTheme.surface,
         leading: IconButton(
@@ -193,20 +195,20 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
             Text('🎡 ', style: TextStyle(fontSize: 18)),
             Text(
               'QUANTUM LUCKY WHEEL',
-              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.bitcoinGold),
+              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.richRuby),
             ),
           ],
         ),
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Column(
               children: [
                 // Header
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(14),
                   decoration: AppTheme.cyberCardDecoration(
                     borderColor: AppTheme.bitcoinGold,
                     glowColor: AppTheme.bitcoinGold,
@@ -214,7 +216,7 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                   child: const Row(
                     children: [
                       Text('🎁 ', style: TextStyle(fontSize: 24)),
-                      SizedBox(width: 12),
+                      SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,14 +226,14 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.bitcoinGold,
-                                letterSpacing: 0.8,
+                                color: AppTheme.textPrimary,
+                                letterSpacing: 0.6,
                               ),
                             ),
                             SizedBox(height: 2),
                             Text(
                               'Spin the wheel to win instant Satoshis, Power Battery & Frenzy Overdrive!',
-                              style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                              style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                             ),
                           ],
                         ),
@@ -240,13 +242,13 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 20),
 
                 // Wheel Container with Needle
                 Center(
                   child: SizedBox(
-                    width: 320,
-                    height: 320,
+                    width: 300,
+                    height: 300,
                     child: Stack(
                       alignment: Alignment.center,
                       clipBehavior: Clip.none,
@@ -255,44 +257,37 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                         Transform.rotate(
                           angle: _currentAngle,
                           child: CustomPaint(
-                            size: const Size(310, 310),
+                            size: const Size(290, 290),
                             painter: _WheelPainter(rewards: _rewards),
                           ),
                         ),
 
                         // Center Hub
                         Container(
-                          width: 58,
-                          height: 58,
+                          width: 54,
+                          height: 54,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: AppTheme.surface,
                             border: Border.all(color: AppTheme.bitcoinGold, width: 3),
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.bitcoinGold.withValues(alpha: 0.6),
-                                blurRadius: 16,
+                                color: AppTheme.bitcoinGold.withValues(alpha: 0.4),
+                                blurRadius: 12,
                               ),
                             ],
                           ),
                           child: const Center(
-                            child: Text('₿', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppTheme.bitcoinGold)),
+                            child: Text('₿', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.bitcoinGold)),
                           ),
                         ),
 
                         // Top Pointer / Needle
                         Positioned(
                           top: -14,
-                          child: Container(
+                          child: SizedBox(
                             width: 24,
                             height: 34,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(color: Colors.red, blurRadius: 8),
-                              ],
-                            ),
-                            clipBehavior: Clip.hardEdge,
                             child: CustomPaint(painter: _NeedlePainter()),
                           ),
                         ),
@@ -301,28 +296,26 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 24),
 
                 // Spin Button
                 GestureDetector(
                   onTap: _isSpinning ? null : _spin,
                   child: Container(
                     width: double.infinity,
-                    height: 60,
+                    height: 54,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: _isSpinning
-                            ? [AppTheme.surfaceLight, AppTheme.surface]
-                            : [const Color(0xFFFFB300), AppTheme.bitcoinGold],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
+                      gradient: _isSpinning
+                          ? const LinearGradient(colors: [AppTheme.surfaceSecondary, AppTheme.surfaceSecondary])
+                          : AppTheme.goldGradient,
+                      borderRadius: BorderRadius.circular(14),
                       boxShadow: _isSpinning
                           ? null
                           : [
                               BoxShadow(
-                                color: AppTheme.bitcoinGold.withValues(alpha: 0.5),
-                                blurRadius: 16,
-                                spreadRadius: 2,
+                                color: AppTheme.bitcoinGold.withValues(alpha: 0.35),
+                                blurRadius: 12,
+                                spreadRadius: 1,
                               ),
                             ],
                       border: Border.all(color: Colors.white, width: 2),
@@ -333,17 +326,17 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                         children: [
                           Icon(
                             _isSpinning ? Icons.refresh : Icons.play_arrow,
-                            color: _isSpinning ? AppTheme.textMuted : Colors.black,
-                            size: 26,
+                            color: _isSpinning ? AppTheme.textMuted : Colors.white,
+                            size: 24,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             _isSpinning ? 'SPINNING NODE...' : 'SPIN THE WHEEL NOW!',
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
-                              color: _isSpinning ? AppTheme.textMuted : Colors.black,
-                              letterSpacing: 1.0,
+                              color: _isSpinning ? AppTheme.textMuted : Colors.white,
+                              letterSpacing: 0.8,
                             ),
                           ),
                         ],
@@ -351,7 +344,7 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -360,11 +353,11 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
           if (_wonReward != null)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withValues(alpha: 0.85),
+                color: Colors.black.withValues(alpha: 0.65),
                 child: Center(
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 24),
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(22),
                     decoration: AppTheme.cyberCardDecoration(
                       borderColor: AppTheme.bitcoinGold,
                       glowColor: AppTheme.bitcoinGold,
@@ -372,44 +365,44 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(_wonReward!.icon, style: const TextStyle(fontSize: 48)),
+                        Text(_wonReward!.icon, style: const TextStyle(fontSize: 44)),
                         const SizedBox(height: 8),
                         const Text(
                           'CONGRATULATIONS!',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                            color: AppTheme.textPrimary,
                             letterSpacing: 1.0,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                         Text(
                           _wonReward!.label,
                           style: const TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w900,
-                            color: AppTheme.bitcoinGold,
+                            color: AppTheme.richRuby,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
                             color: AppTheme.surfaceLight,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.surfaceBorder),
+                            border: Border.all(color: AppTheme.surfaceBorderSubtle),
                           ),
                           child: Column(
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Satoshis Won:', style: TextStyle(color: AppTheme.textMuted)),
+                                  const Text('Satoshis Won:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
                                   Text(
                                     '+${_wonReward!.satoshis.toInt()} SAT',
                                     style: const TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                       color: AppTheme.bitcoinGold,
                                     ),
@@ -420,13 +413,13 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Power Grid Refill:', style: TextStyle(color: AppTheme.textMuted)),
+                                  const Text('Power Grid Refill:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
                                   Text(
                                     '+${_wonReward!.power.toInt()}% ⚡',
                                     style: const TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      color: AppTheme.cyanNeon,
+                                      color: AppTheme.greenHash,
                                     ),
                                   ),
                                 ],
@@ -436,13 +429,13 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                                 const Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Bonus Mode:', style: TextStyle(color: AppTheme.textMuted)),
+                                    Text('Bonus Mode:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 12)),
                                     Text(
                                       '3X FRENZY 🚀',
                                       style: TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: AppTheme.redOverheat,
+                                        color: AppTheme.richRuby,
                                       ),
                                     ),
                                   ],
@@ -451,19 +444,22 @@ class _LuckyWheelGameState extends State<LuckyWheelGame> with SingleTickerProvid
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         ElevatedButton(
                           onPressed: widget.onGameOver,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.bitcoinGold,
-                            minimumSize: const Size(double.infinity, 50),
+                            backgroundColor: AppTheme.richRuby,
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size(double.infinity, 48),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            elevation: 2,
                           ),
                           child: const Text(
                             'CLAIM REWARD',
                             style: TextStyle(
-                              color: Colors.black,
                               fontWeight: FontWeight.w900,
+                              fontSize: 13,
+                              letterSpacing: 0.8,
                             ),
                           ),
                         ),

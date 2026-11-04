@@ -8,7 +8,7 @@ import '../theme/app_theme.dart';
 class VaultScreen extends StatefulWidget {
   final GameState gameState;
 
-  const VaultScreen({Key? key, required this.gameState}) : super(key: key);
+  const VaultScreen({super.key, required this.gameState});
 
   @override
   State<VaultScreen> createState() => _VaultScreenState();
@@ -39,23 +39,23 @@ class _VaultScreenState extends State<VaultScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('🎉', style: TextStyle(fontSize: 48)),
+                const Text('🎉', style: TextStyle(fontSize: 44)),
                 const SizedBox(height: 10),
                 const Text(
                   'SIMULATED PAYOUT CONFIRMED',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.w900,
                     color: AppTheme.greenHash,
-                    letterSpacing: 1.0,
+                    letterSpacing: 0.8,
                   ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Simulated blockchain transaction broadcasted to the demo network:',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                  style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
                 ),
                 const SizedBox(height: 14),
                 Container(
@@ -63,23 +63,28 @@ class _VaultScreenState extends State<VaultScreen> {
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceLight,
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.surfaceBorderSubtle),
                   ),
                   child: Column(
                     children: [
-                      const Text('TRANSACTION HASH', style: TextStyle(fontSize: 9, color: AppTheme.textMuted)),
-                      Text(
-                        txHash,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.cyanNeon,
-                          fontFamily: 'monospace',
+                      const Text('TRANSACTION HASH', style: TextStyle(fontSize: 8.5, color: AppTheme.textMuted, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 2),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          txHash,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.cyanNeon,
+                            fontFamily: 'monospace',
+                          ),
                         ),
                       ),
                       const SizedBox(height: 4),
                       const Text(
                         'Status: 12/12 Confirmations (Virtual Simulation)',
-                        style: TextStyle(fontSize: 10, color: AppTheme.greenHash),
+                        style: TextStyle(fontSize: 10, color: AppTheme.greenHash, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -91,10 +96,11 @@ class _VaultScreenState extends State<VaultScreen> {
                     onPressed: () => Navigator.pop(ctx),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.greenHash,
-                      foregroundColor: Colors.black,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: const Text('GREAT!'),
+                    child: const Text('GREAT!', style: TextStyle(fontWeight: FontWeight.w900)),
                   ),
                 ),
               ],
@@ -115,11 +121,11 @@ class _VaultScreenState extends State<VaultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Hardware Cold Wallet Display
+          // Hardware Cold Wallet Display Card
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(16),
             decoration: AppTheme.cyberCardDecoration(
-              borderColor: AppTheme.cyanNeon.withOpacity(0.5),
+              borderColor: AppTheme.cyanNeon.withValues(alpha: 0.5),
               glowColor: AppTheme.cyanNeon,
             ),
             child: Column(
@@ -128,24 +134,30 @@ class _VaultScreenState extends State<VaultScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
-                      children: [
-                        Text('🛡️ ', style: TextStyle(fontSize: 18)),
-                        Text(
-                          'HARDWARE VAULT SECURED',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.cyanNeon,
-                            letterSpacing: 0.8,
+                    const Expanded(
+                      child: Row(
+                        children: [
+                          Text('🛡️ ', style: TextStyle(fontSize: 18)),
+                          Flexible(
+                            child: Text(
+                              'HARDWARE VAULT SECURED',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.cyanNeon,
+                                letterSpacing: 0.6,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: AppTheme.greenHash.withOpacity(0.2),
+                        color: AppTheme.greenHash.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
@@ -155,52 +167,76 @@ class _VaultScreenState extends State<VaultScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
 
-                // Vault OLED Screen
+                // Vault Display Container
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xFF1E293B)),
+                    color: const Color(0xFF1B161A),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFF382F36)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
                         'VAULT PUBLIC KEY',
-                        style: TextStyle(fontSize: 9, color: AppTheme.textMuted, letterSpacing: 0.8),
+                        style: TextStyle(fontSize: 8.5, color: Color(0xFFAFA4AC), letterSpacing: 0.8, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'bc1q8df749a2c918e74f0a234f9a0c71a39fbc8120e',
-                        style: TextStyle(fontSize: 11, color: AppTheme.cyanNeon, fontFamily: 'monospace'),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'bc1q8df749a2c918e74f0a234f9a0c71a39fbc8120e',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: AppTheme.cyanNeon.withValues(alpha: 0.9),
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('TOTAL SATOSHIS', style: TextStyle(fontSize: 9, color: AppTheme.textMuted)),
-                              Text(
-                                '${satoshiFormat.format(widget.gameState.satoshis.toInt())} SAT',
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.bitcoinGold),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('TOTAL SATOSHIS', style: TextStyle(fontSize: 8.5, color: Color(0xFFAFA4AC), fontWeight: FontWeight.bold)),
+                                Text(
+                                  '${satoshiFormat.format(widget.gameState.satoshis.toInt())} SAT',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.bitcoinGold),
+                                ),
+                              ],
+                            ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              const Text('EST. VALUE', style: TextStyle(fontSize: 9, color: AppTheme.textMuted)),
-                              Text(
-                                currencyFormat.format(widget.gameState.portfolioUsdValue),
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.greenHash),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                const Text('EST. VALUE', style: TextStyle(fontSize: 8.5, color: Color(0xFFAFA4AC), fontWeight: FontWeight.bold)),
+                                Text(
+                                  currencyFormat.format(widget.gameState.portfolioUsdValue),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.greenHash),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -217,9 +253,12 @@ class _VaultScreenState extends State<VaultScreen> {
                     onPressed: isProcessingPayout ? null : _simulatePayout,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.greenHash,
-                      foregroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppTheme.surfaceSecondary,
+                      disabledForegroundColor: AppTheme.textMuted,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 2,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -228,11 +267,14 @@ class _VaultScreenState extends State<VaultScreen> {
                           const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         else ...[
                           const Text('📤 '),
-                          const Text('SIMULATE DEMO PAYOUT'),
+                          const Text(
+                            'SIMULATE DEMO PAYOUT',
+                            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 12),
+                          ),
                         ],
                       ],
                     ),
@@ -242,13 +284,13 @@ class _VaultScreenState extends State<VaultScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Hard Fork / Genesis Prestige
+          // Hard Fork / Genesis Prestige Card
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(16),
             decoration: AppTheme.cyberCardDecoration(
-              borderColor: AppTheme.purpleQuantum.withOpacity(0.6),
+              borderColor: AppTheme.purpleQuantum.withValues(alpha: 0.5),
               glowColor: AppTheme.purpleQuantum,
             ),
             child: Column(
@@ -257,30 +299,36 @@ class _VaultScreenState extends State<VaultScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
-                      children: [
-                        Text('🔮 ', style: TextStyle(fontSize: 18)),
-                        Text(
-                          'HARD FORK / PRESTIGE',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.purpleQuantum,
-                            letterSpacing: 0.8,
+                    const Expanded(
+                      child: Row(
+                        children: [
+                          Text('🔮 ', style: TextStyle(fontSize: 18)),
+                          Flexible(
+                            child: Text(
+                              'HARD FORK / PRESTIGE',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.purpleQuantum,
+                                letterSpacing: 0.6,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: AppTheme.purpleQuantum.withOpacity(0.2),
+                        color: AppTheme.purpleQuantum.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '${widget.gameState.genesisCoins} GENESIS COINS',
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 9.5,
                           fontWeight: FontWeight.bold,
                           color: AppTheme.purpleQuantum,
                         ),
@@ -289,11 +337,11 @@ class _VaultScreenState extends State<VaultScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Fork the blockchain to start fresh with permanent Genesis Hash power! Each Genesis Coin grants +50% global production forever.',
-                  style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                  style: TextStyle(fontSize: 11.5, color: AppTheme.textSecondary),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -313,15 +361,18 @@ class _VaultScreenState extends State<VaultScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.purpleQuantum,
                       foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppTheme.surfaceSecondary,
+                      disabledForegroundColor: AppTheme.textMuted,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 2,
                     ),
                     child: Text(
                       widget.gameState.lifetimeSatoshisMined >= 50000
                           ? 'TRIGGER HARD FORK (+${max(1, (sqrt(widget.gameState.lifetimeSatoshisMined / 25000)).floor())} COINS)'
                           : 'REQUIRES 50,000 LIFETIME SAT (HAVE: ${satoshiFormat.format(widget.gameState.lifetimeSatoshisMined.toInt())})',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 11),
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
@@ -329,18 +380,18 @@ class _VaultScreenState extends State<VaultScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           // Lifetime Stats Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: AppTheme.cyberCardDecoration(borderColor: AppTheme.surfaceBorder),
+            decoration: AppTheme.cyberCardDecoration(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'LIFETIME MINING STATISTICS',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                 ),
                 const SizedBox(height: 12),
                 _buildStatRow('Total Satoshis Mined', '${satoshiFormat.format(widget.gameState.lifetimeSatoshisMined.toInt())} SAT'),
@@ -352,22 +403,22 @@ class _VaultScreenState extends State<VaultScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Settings (Audio & Haptics)
+          // Settings Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: AppTheme.cyberCardDecoration(borderColor: AppTheme.surfaceBorder),
+            decoration: AppTheme.cyberCardDecoration(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('SETTINGS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
-                const SizedBox(height: 8),
+                const Text('SETTINGS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                const SizedBox(height: 6),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Sound Effects & Chimes', style: TextStyle(fontSize: 13)),
+                  title: const Text('Sound Effects & Chimes', style: TextStyle(fontSize: 13, color: AppTheme.textPrimary)),
                   value: widget.gameState.soundEnabled,
-                  activeTrackColor: AppTheme.bitcoinGold,
+                  activeTrackColor: AppTheme.richRuby,
                   onChanged: (val) {
                     widget.gameState.toggleSound();
                     AudioService.instance.soundEnabled = val;
@@ -375,7 +426,7 @@ class _VaultScreenState extends State<VaultScreen> {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Haptic Vibration Feedback', style: TextStyle(fontSize: 13)),
+                  title: const Text('Haptic Vibration Feedback', style: TextStyle(fontSize: 13, color: AppTheme.textPrimary)),
                   value: widget.gameState.hapticsEnabled,
                   activeTrackColor: AppTheme.cyanNeon,
                   onChanged: (val) {
@@ -397,8 +448,8 @@ class _VaultScreenState extends State<VaultScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textMuted)),
-          Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+          Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+          Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
         ],
       ),
     );

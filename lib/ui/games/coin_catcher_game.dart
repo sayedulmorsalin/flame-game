@@ -128,7 +128,7 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
   }
 
   void _gameLoop() {
-    if (_isGameOver) return;
+    if (_isGameOver || !mounted) return;
 
     final dt = 0.016; // approximate delta time per frame
 
@@ -287,7 +287,7 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF070B14),
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         backgroundColor: AppTheme.surface,
         leading: IconButton(
@@ -308,7 +308,7 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
             Text('🪙 ', style: TextStyle(fontSize: 18)),
             Text(
               'SATOSHI CATCHER',
-              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.bitcoinGold),
+              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.richRuby),
             ),
           ],
         ),
@@ -454,12 +454,15 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppTheme.surface.withValues(alpha: 0.9),
+                        color: AppTheme.surface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: _secondsLeft <= 5 ? AppTheme.redOverheat : AppTheme.surfaceBorder,
                           width: 1.5,
                         ),
+                        boxShadow: const [
+                          BoxShadow(color: Color(0x103A1B28), blurRadius: 6),
+                        ],
                       ),
                       child: Row(
                         children: [
@@ -474,7 +477,7 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: _secondsLeft <= 5 ? AppTheme.redOverheat : Colors.white,
+                              color: _secondsLeft <= 5 ? AppTheme.redOverheat : AppTheme.textPrimary,
                             ),
                           ),
                         ],
@@ -486,14 +489,12 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.orangeFrenzy, AppTheme.redOverheat],
-                          ),
+                          gradient: AppTheme.rubyGradient,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.orangeFrenzy.withValues(alpha: 0.5),
-                              blurRadius: 10,
+                              color: AppTheme.richRuby.withValues(alpha: 0.35),
+                              blurRadius: 8,
                             ),
                           ],
                         ),
@@ -511,9 +512,12 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppTheme.surface.withValues(alpha: 0.9),
+                        color: AppTheme.surface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: AppTheme.bitcoinGold, width: 1.5),
+                        boxShadow: const [
+                          BoxShadow(color: Color(0x103A1B28), blurRadius: 6),
+                        ],
                       ),
                       child: Row(
                         children: [
@@ -548,15 +552,16 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.surfaceLight,
+                        backgroundColor: AppTheme.surface,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                           side: const BorderSide(color: AppTheme.surfaceBorder),
                         ),
+                        elevation: 2,
                       ),
-                      icon: const Icon(Icons.arrow_back_ios, size: 14, color: AppTheme.cyanNeon),
-                      label: const Text('LEFT', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      icon: const Icon(Icons.arrow_back_ios, size: 14, color: AppTheme.richRuby),
+                      label: const Text('LEFT', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
@@ -565,15 +570,16 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.surfaceLight,
+                        backgroundColor: AppTheme.surface,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                           side: const BorderSide(color: AppTheme.surfaceBorder),
                         ),
+                        elevation: 2,
                       ),
-                      icon: const Text('RIGHT', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      label: const Icon(Icons.arrow_forward_ios, size: 14, color: AppTheme.cyanNeon),
+                      icon: const Text('RIGHT', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
+                      label: const Icon(Icons.arrow_forward_ios, size: 14, color: AppTheme.richRuby),
                     ),
                   ],
                 ),
@@ -583,11 +589,11 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
               if (_isGameOver)
                 Positioned.fill(
                   child: Container(
-                    color: Colors.black.withValues(alpha: 0.85),
+                    color: Colors.black.withValues(alpha: 0.65),
                     child: Center(
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 24),
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(22),
                         decoration: AppTheme.cyberCardDecoration(
                           borderColor: AppTheme.bitcoinGold,
                           glowColor: AppTheme.bitcoinGold,
@@ -595,35 +601,35 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('🎉', style: TextStyle(fontSize: 48)),
+                            const Text('🎉', style: TextStyle(fontSize: 44)),
                             const SizedBox(height: 8),
                             const Text(
                               'SESSION COMPLETE!',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: AppTheme.textPrimary,
                                 letterSpacing: 1.0,
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 14),
                             Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
                                 color: AppTheme.surfaceLight,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppTheme.surfaceBorder),
+                                border: Border.all(color: AppTheme.surfaceBorderSubtle),
                               ),
                               child: Column(
                                 children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('Satoshis Earned:', style: TextStyle(color: AppTheme.textMuted)),
+                                      const Text('Satoshis Earned:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                       Text(
                                         '+$_score SAT',
                                         style: const TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 17,
                                           fontWeight: FontWeight.w900,
                                           color: AppTheme.bitcoinGold,
                                         ),
@@ -631,11 +637,11 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  Row(
+                                  const Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('Power Grid Recharged:', style: TextStyle(color: AppTheme.textMuted)),
-                                      const Text(
+                                      Text('Power Grid Recharged:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
+                                      Text(
                                         '+40% ⚡',
                                         style: TextStyle(
                                           fontSize: 15,
@@ -649,7 +655,7 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('Highest Combo:', style: TextStyle(color: AppTheme.textMuted)),
+                                      const Text('Highest Combo:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                       Text(
                                         '${_maxCombo}X',
                                         style: const TextStyle(
@@ -664,13 +670,13 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('Coins Caught:', style: TextStyle(color: AppTheme.textMuted)),
+                                      const Text('Coins Caught:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                       Text(
                                         '$_itemsCaught',
                                         style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: AppTheme.textPrimary,
                                         ),
                                       ),
                                     ],
@@ -678,18 +684,18 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 18),
                             Row(
                               children: [
                                 Expanded(
                                   child: OutlinedButton(
                                     onPressed: _restartGame,
                                     style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
                                       side: const BorderSide(color: AppTheme.surfaceBorder),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     ),
-                                    child: const Text('PLAY AGAIN', style: TextStyle(color: Colors.white)),
+                                    child: const Text('PLAY AGAIN', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -697,15 +703,17 @@ class _CoinCatcherGameState extends State<CoinCatcherGame> with SingleTickerProv
                                   child: ElevatedButton(
                                     onPressed: widget.onGameOver,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppTheme.bitcoinGold,
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      backgroundColor: AppTheme.richRuby,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      elevation: 2,
                                     ),
                                     child: const Text(
                                       'CLAIM COINS',
                                       style: TextStyle(
-                                        color: Colors.black,
                                         fontWeight: FontWeight.w900,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),
@@ -730,7 +738,7 @@ class _CyberGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF131D2F).withValues(alpha: 0.3)
+      ..color = AppTheme.surfaceBorder.withValues(alpha: 0.35)
       ..strokeWidth = 1.0;
 
     const spacing = 40.0;

@@ -8,10 +8,10 @@ class TopHud extends StatelessWidget {
   final VoidCallback onBoostPressed;
 
   const TopHud({
-    Key? key,
+    super.key,
     required this.gameState,
     required this.onBoostPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +19,17 @@ class TopHud extends StatelessWidget {
     final usdFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: AppTheme.surface.withOpacity(0.92),
+        color: AppTheme.surface,
         border: const Border(
           bottom: BorderSide(color: AppTheme.surfaceBorder, width: 1.5),
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Color(0x103A1B28),
             blurRadius: 10,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -38,88 +38,100 @@ class TopHud extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Top Row: Bitcoin Balance & Hashrate
+            // Top Row: Bitcoin Balance (Left) & Status Badges (Right)
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Bitcoin Balance
-                Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFFB300), AppTheme.bitcoinGold],
+                // Bitcoin Balance Section (Expanded so it never overflows)
+                Expanded(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: AppTheme.goldGradient,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.bitcoinGold.withValues(alpha: 0.35),
+                              blurRadius: 8,
+                            ),
+                          ],
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.bitcoinGold.withOpacity(0.4),
-                            blurRadius: 8,
+                        child: const Center(
+                          child: Text(
+                            '₿',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
-                        ],
+                        ),
                       ),
-                      child: const Center(
-                        child: Text(
-                          '₿',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${gameState.btcBalance.toStringAsFixed(8)} BTC',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w900,
+                                color: AppTheme.textPrimary,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                            Text(
+                              '${satoshiFormat.format(gameState.satoshis.toInt())} SAT • ${usdFormat.format(gameState.portfolioUsdValue)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: AppTheme.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${gameState.btcBalance.toStringAsFixed(8)} BTC',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                            color: AppTheme.bitcoinGold,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        Text(
-                          '${satoshiFormat.format(gameState.satoshis.toInt())} SAT  •  ${usdFormat.format(gameState.portfolioUsdValue)}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppTheme.textMuted,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
 
-                // Hashrate, Battery & Boost
+                const SizedBox(width: 8),
+
+                // Right Status Badges: Battery, Hashrate & Boost (Flexible and compact)
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Rig Power Battery Pill
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppTheme.surfaceLight,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: gameState.isRigPowered
-                              ? AppTheme.greenHash.withValues(alpha: 0.6)
-                              : AppTheme.orangeFrenzy.withValues(alpha: 0.8),
+                              ? AppTheme.greenHash
+                              : AppTheme.orangeFrenzy,
+                          width: 1.2,
                         ),
                       ),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             gameState.isRigPowered ? Icons.battery_charging_full : Icons.battery_alert,
                             size: 14,
                             color: gameState.isRigPowered ? AppTheme.greenHash : AppTheme.orangeFrenzy,
                           ),
-                          const SizedBox(width: 3),
+                          const SizedBox(width: 2),
                           Text(
                             '${gameState.rigPower.toInt()}%',
                             style: TextStyle(
@@ -131,79 +143,92 @@ class TopHud extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 5),
 
                     // Hashrate Pill
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppTheme.surfaceLight,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: gameState.isFrenzyActive
-                              ? AppTheme.orangeFrenzy
+                              ? AppTheme.richRuby
                               : (gameState.isRigPowered
-                                  ? AppTheme.greenHash.withValues(alpha: 0.5)
-                                  : AppTheme.textMuted.withValues(alpha: 0.5)),
+                                  ? AppTheme.cyanNeon
+                                  : AppTheme.textMuted),
+                          width: 1.2,
                         ),
                       ),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.bolt,
-                            size: 15,
+                            size: 14,
                             color: gameState.isFrenzyActive
-                                ? AppTheme.orangeFrenzy
-                                : (gameState.isRigPowered ? AppTheme.greenHash : AppTheme.textMuted),
+                                ? AppTheme.richRuby
+                                : (gameState.isRigPowered ? AppTheme.cyanNeon : AppTheme.textMuted),
                           ),
-                          const SizedBox(width: 3),
+                          const SizedBox(width: 2),
                           Text(
-                            gameState.isRigPowered ? gameState.formattedHashrate : 'STANDBY',
+                            gameState.isRigPowered ? gameState.formattedHashrate : 'OFFLINE',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 10.5,
                               fontWeight: FontWeight.bold,
                               color: gameState.isFrenzyActive
-                                  ? AppTheme.orangeFrenzy
-                                  : (gameState.isRigPowered ? AppTheme.greenHash : AppTheme.textMuted),
+                                  ? AppTheme.richRuby
+                                  : (gameState.isRigPowered ? AppTheme.cyanNeon : AppTheme.textMuted),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 5),
 
                     // Boost Button
                     InkWell(
                       onTap: onBoostPressed,
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: gameState.boostDurationRemaining > 0
-                                ? [AppTheme.orangeFrenzy, AppTheme.redOverheat]
-                                : [AppTheme.surfaceLight, const Color(0xFF202A40)],
-                          ),
+                          gradient: gameState.boostDurationRemaining > 0
+                              ? AppTheme.rubyGradient
+                              : const LinearGradient(
+                                  colors: [Color(0xFFFFFFFF), Color(0xFFF3EDF1)],
+                                ),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: gameState.boostDurationRemaining > 0
-                                ? AppTheme.orangeFrenzy
-                                : AppTheme.cyanNeon.withValues(alpha: 0.4),
+                                ? AppTheme.richRuby
+                                : AppTheme.surfaceBorder,
+                            width: 1.2,
                           ),
+                          boxShadow: gameState.boostDurationRemaining > 0
+                              ? [
+                                  BoxShadow(
+                                    color: AppTheme.richRuby.withValues(alpha: 0.3),
+                                    blurRadius: 6,
+                                  ),
+                                ]
+                              : null,
                         ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('🚀 ', style: TextStyle(fontSize: 11)),
+                            const Text('🚀', style: TextStyle(fontSize: 10)),
+                            const SizedBox(width: 2),
                             Text(
                               gameState.boostDurationRemaining > 0
                                   ? '${gameState.boostDurationRemaining.toInt()}s'
                                   : '2X',
                               style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w900,
                                 color: gameState.boostDurationRemaining > 0
                                     ? Colors.white
-                                    : AppTheme.cyanNeon,
+                                    : AppTheme.richRuby,
                               ),
                             ),
                           ],
@@ -215,7 +240,7 @@ class TopHud extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 7),
 
             // Tap Frenzy Progress Bar
             Column(
@@ -226,14 +251,14 @@ class TopHud extends StatelessWidget {
                   children: [
                     Text(
                       gameState.isFrenzyActive
-                          ? '🔥 OVERCLOCK FRENZY (3X ACTIVE) 🔥'
-                          : '⚡ TAP OVERCLOCK GAUGE',
+                          ? '🔥 OVERCLOCK FRENZY (3X MULTIPLIER) 🔥'
+                          : '⚡ OVERCLOCK GAUGE',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 9.5,
                         fontWeight: FontWeight.bold,
                         color: gameState.isFrenzyActive
-                            ? AppTheme.orangeFrenzy
-                            : AppTheme.textMuted,
+                            ? AppTheme.richRuby
+                            : AppTheme.textSecondary,
                         letterSpacing: 0.6,
                       ),
                     ),
@@ -242,10 +267,10 @@ class TopHud extends StatelessWidget {
                           ? '${gameState.frenzyDurationRemaining.toStringAsFixed(1)}s'
                           : '${(gameState.frenzyMeter * 100).toInt()}%',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 9.5,
                         fontWeight: FontWeight.bold,
                         color: gameState.isFrenzyActive
-                            ? AppTheme.orangeFrenzy
+                            ? AppTheme.richRuby
                             : AppTheme.cyanNeon,
                       ),
                     ),
@@ -255,14 +280,14 @@ class TopHud extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: Container(
-                    height: 6,
-                    color: AppTheme.surfaceLight,
+                    height: 5,
+                    color: AppTheme.surfaceSecondary,
                     child: LinearProgressIndicator(
                       value: gameState.frenzyMeter,
                       backgroundColor: Colors.transparent,
                       valueColor: AlwaysStoppedAnimation<Color>(
                         gameState.isFrenzyActive
-                            ? AppTheme.orangeFrenzy
+                            ? AppTheme.richRuby
                             : AppTheme.cyanNeon,
                       ),
                     ),

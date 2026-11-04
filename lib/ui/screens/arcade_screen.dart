@@ -31,9 +31,9 @@ class ArcadeScreen extends StatelessWidget {
         final isPowered = gameState.isRigPowered;
 
         return ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           children: [
-            // 1. Power Grid & Status Banner
+            // 1. Power Grid & Status Banner (Zero overflow on any screen)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: AppTheme.cyberCardDecoration(
@@ -46,31 +46,38 @@ class ArcadeScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Icon(
-                            isPowered ? Icons.battery_charging_full : Icons.battery_alert,
-                            color: isPowered ? AppTheme.greenHash : AppTheme.orangeFrenzy,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            isPowered
-                                ? '⚡ RIG POWER: ${power.toInt()}% [MINING ACTIVE]'
-                                : '⚠️ RIG POWER: 0% [STANDBY / OFFLINE]',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w900,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              isPowered ? Icons.battery_charging_full : Icons.battery_alert,
                               color: isPowered ? AppTheme.greenHash : AppTheme.orangeFrenzy,
-                              letterSpacing: 0.8,
+                              size: 20,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                isPowered
+                                    ? '⚡ RIG POWER: ${power.toInt()}% [MINING]'
+                                    : '⚠️ RIG POWER: 0% [OFFLINE]',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w900,
+                                  color: isPowered ? AppTheme.greenHash : AppTheme.orangeFrenzy,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         '${gameState.satoshis.toInt()} SAT',
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w900,
                           color: AppTheme.bitcoinGold,
                         ),
@@ -80,21 +87,24 @@ class ArcadeScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(6),
-                    child: LinearProgressIndicator(
-                      value: (power / 100.0).clamp(0.0, 1.0),
-                      minHeight: 8,
-                      backgroundColor: const Color(0xFF0C1220),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isPowered ? AppTheme.greenHash : AppTheme.orangeFrenzy,
+                    child: Container(
+                      height: 7,
+                      color: AppTheme.surfaceSecondary,
+                      child: LinearProgressIndicator(
+                        value: (power / 100.0).clamp(0.0, 1.0),
+                        backgroundColor: Colors.transparent,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isPowered ? AppTheme.greenHash : AppTheme.orangeFrenzy,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 9),
                   Text(
                     isPowered
                         ? 'Your mining rigs are powered and mining Satoshis. Play games to top up energy & earn bonus coin bags!'
                         : 'Coins are not passively increasing because rigs require power! Play any mini-game below to get instant coins and recharge the power grid!',
-                    style: const TextStyle(fontSize: 11.5, color: AppTheme.textMuted, height: 1.3),
+                    style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, height: 1.35),
                   ),
                 ],
               ),
@@ -108,9 +118,9 @@ class ArcadeScreen extends StatelessWidget {
                 Text(
                   'INTERACTIVE ARCADE & GAMES',
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: AppTheme.textPrimary,
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -128,7 +138,7 @@ class ArcadeScreen extends StatelessWidget {
               icon: '🪙',
               rewardPreview: 'Earn 300 - 800+ SAT',
               powerBonus: '+40% Power Grid',
-              gradientColors: [const Color(0xFF0F2B48), AppTheme.surface],
+              gradientColors: [const Color(0xFFFFFFFF), const Color(0xFFF3F8FB)],
               borderColor: AppTheme.cyanNeon,
               onTap: () {
                 _launchGame(
@@ -141,7 +151,7 @@ class ArcadeScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
             // Game 2: Cipher Hash Cracker
             _buildGameCard(
@@ -153,7 +163,7 @@ class ArcadeScreen extends StatelessWidget {
               icon: '🧠',
               rewardPreview: 'Earn up to 1,800+ SAT',
               powerBonus: '+50% Power Grid',
-              gradientColors: [const Color(0xFF281448), AppTheme.surface],
+              gradientColors: [const Color(0xFFFFFFFF), const Color(0xFFFBF6FE)],
               borderColor: AppTheme.purpleQuantum,
               onTap: () {
                 _launchGame(
@@ -166,7 +176,7 @@ class ArcadeScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
             // Game 3: Precision Laser Drill
             _buildGameCard(
@@ -174,12 +184,12 @@ class ArcadeScreen extends StatelessWidget {
               title: 'PRECISION LASER DRILL',
               subtitle: 'Time your strike inside the golden sweet spot for critical hash extractions!',
               tag: 'REFLEX & TIMING',
-              tagColor: AppTheme.orangeFrenzy,
+              tagColor: AppTheme.richRuby,
               icon: '🎯',
               rewardPreview: 'Earn up to 600+ SAT',
               powerBonus: '+35% Power Grid',
-              gradientColors: [const Color(0xFF452010), AppTheme.surface],
-              borderColor: AppTheme.orangeFrenzy,
+              gradientColors: [const Color(0xFFFFFFFF), const Color(0xFFFDF6F7)],
+              borderColor: AppTheme.richRuby,
               onTap: () {
                 _launchGame(
                   context,
@@ -191,7 +201,7 @@ class ArcadeScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
             // Game 4: Quantum Lucky Wheel
             _buildGameCard(
@@ -202,8 +212,8 @@ class ArcadeScreen extends StatelessWidget {
               tagColor: AppTheme.bitcoinGold,
               icon: '🎡',
               rewardPreview: 'Jackpots up to 1,500 SAT',
-              powerBonus: 'Up to 100% Power Battery',
-              gradientColors: [const Color(0xFF42280A), AppTheme.surface],
+              powerBonus: 'Up to 100% Battery',
+              gradientColors: [const Color(0xFFFFFFFF), const Color(0xFFFDF9F2)],
               borderColor: AppTheme.bitcoinGold,
               onTap: () {
                 _launchGame(
@@ -216,31 +226,27 @@ class ArcadeScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
             // 5. Interactive Manual Dynamo Generator Card
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppTheme.surfaceLight,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppTheme.surfaceBorder),
-              ),
+              decoration: AppTheme.cyberCardDecoration(),
               child: Row(
                 children: [
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppTheme.surface,
-                      border: Border.all(color: AppTheme.cyanNeon),
+                      color: AppTheme.surfaceLight,
+                      border: Border.all(color: AppTheme.cyanNeon, width: 1.5),
                     ),
                     child: const Center(
-                      child: Text('⚡', style: TextStyle(fontSize: 24)),
+                      child: Text('⚡', style: TextStyle(fontSize: 22)),
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 12),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,17 +256,18 @@ class ArcadeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppTheme.textPrimary,
                           ),
                         ),
                         SizedBox(height: 2),
                         Text(
                           'Tap repeatedly on the Mine screen to crank the generator manually!',
-                          style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                          style: TextStyle(fontSize: 10.5, color: AppTheme.textSecondary),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
                       final earned = gameState.crankGenerator();
@@ -271,24 +278,25 @@ class ArcadeScreen extends StatelessWidget {
                           backgroundColor: AppTheme.surface,
                           content: Text(
                             '+${earned.toStringAsFixed(1)} SAT • +4% Rig Power ⚡',
-                            style: const TextStyle(color: AppTheme.bitcoinGold, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: AppTheme.richRuby, fontWeight: FontWeight.bold),
                           ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.surface,
+                      backgroundColor: AppTheme.surfaceLight,
                       foregroundColor: AppTheme.cyanNeon,
                       side: const BorderSide(color: AppTheme.cyanNeon),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      elevation: 0,
                     ),
-                    child: const Text('CRANK', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('CRANK', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 18),
           ],
         );
       },
@@ -316,12 +324,13 @@ class ArcadeScreen extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor.withValues(alpha: 0.6), width: 1.5),
+        border: Border.all(color: borderColor.withValues(alpha: 0.5), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: borderColor.withValues(alpha: 0.15),
-            blurRadius: 12,
+            color: borderColor.withValues(alpha: 0.12),
+            blurRadius: 10,
             spreadRadius: 1,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -331,7 +340,7 @@ class ArcadeScreen extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -339,30 +348,31 @@ class ArcadeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                       decoration: BoxDecoration(
-                        color: tagColor.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: tagColor.withValues(alpha: 0.6)),
+                        color: tagColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: tagColor.withValues(alpha: 0.4)),
                       ),
                       child: Text(
                         tag,
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 9.5,
                           fontWeight: FontWeight.w900,
                           color: tagColor,
-                          letterSpacing: 0.6,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.bolt, size: 14, color: AppTheme.greenHash),
                         const SizedBox(width: 2),
                         Text(
                           powerBonus,
                           style: const TextStyle(
-                            fontSize: 11,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.bold,
                             color: AppTheme.greenHash,
                           ),
@@ -371,64 +381,81 @@ class ArcadeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 Row(
                   children: [
-                    Text(icon, style: const TextStyle(fontSize: 32)),
-                    const SizedBox(width: 14),
+                    Text(icon, style: const TextStyle(fontSize: 30)),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 15,
+                              fontSize: 14.5,
                               fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              letterSpacing: 0.8,
+                              color: AppTheme.textPrimary,
+                              letterSpacing: 0.6,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             subtitle,
-                            style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      rewardPreview,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.bitcoinGold,
+                    Expanded(
+                      child: Text(
+                        rewardPreview,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.bitcoinGold,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [borderColor, borderColor.withValues(alpha: 0.8)],
+                          colors: [borderColor, borderColor.withValues(alpha: 0.85)],
                         ),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: borderColor.withValues(alpha: 0.3),
+                            blurRadius: 6,
+                          ),
+                        ],
                       ),
                       child: const Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.play_arrow, size: 16, color: Colors.black),
-                          SizedBox(width: 4),
+                          Icon(Icons.play_arrow, size: 15, color: Colors.white),
+                          SizedBox(width: 3),
                           Text(
                             'PLAY',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 11.5,
                               fontWeight: FontWeight.w900,
-                              color: Colors.black,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ],

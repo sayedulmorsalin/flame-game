@@ -23,7 +23,7 @@ class FloatingTextComponent extends PositionComponent {
         color: color,
         shadows: [
           Shadow(
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
             blurRadius: isCrit ? 10.0 : 6.0,
           ),
           const Shadow(
@@ -54,7 +54,7 @@ class FloatingTextComponent extends PositionComponent {
     final opacity = (1.0 - (lifeTime / maxLife)).clamp(0.0, 1.0);
     final currentPaint = TextPaint(
       style: _textPaint.style.copyWith(
-        color: color.withOpacity(opacity),
+        color: color.withValues(alpha: opacity),
       ),
     );
     currentPaint.render(canvas, text, Vector2.zero());

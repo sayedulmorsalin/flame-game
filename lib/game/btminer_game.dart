@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/game_state.dart';
 import '../models/mining_shaft.dart';
 import '../services/audio_service.dart';
+import '../ui/theme/app_theme.dart';
 import 'components/bedrock_background.dart';
 import 'components/shaft_component.dart';
 import 'components/airdrop_drone_component.dart';
@@ -30,7 +31,7 @@ class BTMinerGame extends FlameGame with TapCallbacks, ScrollDetector {
   });
 
   @override
-  Color backgroundColor() => const Color(0xFF07090E);
+  Color backgroundColor() => AppTheme.background;
 
   @override
   Future<void> onLoad() async {
@@ -98,9 +99,9 @@ class BTMinerGame extends FlameGame with TapCallbacks, ScrollDetector {
       droneTimer = 35.0 + Random().nextDouble() * 20.0; // Spawns every 35-55s
     }
 
-    // Ambient random sparks on active shafts
+    // Ambient subtle sparks on active shafts (minimized, calm cadence)
     ambientSparkTimer += dt;
-    if (ambientSparkTimer >= 0.75) {
+    if (ambientSparkTimer >= 2.5) {
       ambientSparkTimer = 0.0;
       if (gameState.isRigPowered) {
         _spawnAmbientMiningSpark();
@@ -124,23 +125,34 @@ class BTMinerGame extends FlameGame with TapCallbacks, ScrollDetector {
   }
 
   void _spawnAmbientMiningSpark() {
-    for (var shaft in gameState.shafts) {
-      if (shaft.isUnlocked && shaft.level > 0) {
-        final compIndex = shaft.id;
-        if (compIndex < shaftComponents.length) {
-          final comp = shaftComponents[compIndex];
-          final sparkPos = Vector2(
-            comp.position.x + size.x - 45,
-            comp.position.y + shaftHeight / 2,
-          );
-          add(ParticleEffects.createMiningSpark(sparkPos));
-        }
-      }
+    final activeShafts = gameState.shafts.where((s) => s.isUnlocked && s.level > 0).toList();
+    if (activeShafts.isEmpty) return;
+
+    // Pick 1 active shaft at random to show a subtle micro-spark
+    final shaft = activeShafts[Random().nextInt(activeShafts.length)];
+    final compIndex = shaft.id;
+    if (compIndex < shaftComponents.length) {
+      final comp = shaftComponents[compIndex];
+      final sparkPos = Vector2(
+        comp.position.x + size.x - 44,
+        comp.position.y + 48,
+      );
+      add(ParticleEffects.createMiningSpark(sparkPos));
     }
   }
 
   @override
   bool onTapDown(TapDownEvent event) {
+    // If tap was on a locked floor, strictly ignore it (not clickable)
+    for (final comp in shaftComponents) {
+      if (!comp.shaft.isUnlocked) {
+        final localPos = event.canvasPosition - comp.position;
+        if (localPos.x >= 0 && localPos.x <= comp.size.x &&
+            localPos.y >= 0 && localPos.y <= comp.size.y) {
+          return true; // Swallowed - locked floors are not clickable!
+        }
+      }
+    }
     _handleTap(event.canvasPosition);
     return true;
   }

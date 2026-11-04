@@ -11,8 +11,6 @@ class ShaftComponent extends PositionComponent with TapCallbacks {
   bool isPowered;
 
   double animTimer = 0.0;
-  double fanRotation = 0.0;
-  double pickaxeSwing = 0.0;
 
   ShaftComponent({
     required this.shaft,
@@ -26,22 +24,18 @@ class ShaftComponent extends PositionComponent with TapCallbacks {
   @override
   void update(double dt) {
     super.update(dt);
-    animTimer += dt;
-
     if (shaft.isUnlocked && shaft.level > 0 && isPowered) {
-      // Fan speed accelerates with cooling level and frenzy
-      final fanSpeed = (4.0 + shaft.coolingLevel * 3.0) * (isFrenzyActive ? 2.5 : 1.0);
-      fanRotation += fanSpeed * dt;
-
-      // Pickaxe / laser swing oscillation (1.5 Hz)
-      pickaxeSwing = sin(animTimer * 6.0) * 0.45;
+      animTimer += dt;
     }
   }
 
   @override
-  bool onTapDown(TapDownEvent event) {
+  void onTapDown(TapDownEvent event) {
+    if (!shaft.isUnlocked) {
+      // Locked floors are strictly NOT clickable
+      return;
+    }
     onShaftTapped(shaft, event.canvasPosition);
-    return true;
   }
 
   @override
@@ -51,152 +45,219 @@ class ShaftComponent extends PositionComponent with TapCallbacks {
     final w = size.x;
     final h = size.y;
 
-    // 1. Cavern Chamber Background
+    // 1. Cavern Chamber Card (Polished light silver & white card)
+    final cardRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(8, 4, w - 16, h - 8),
+      const Radius.circular(12),
+    );
+
     final chamberPaint = Paint()
       ..color = shaft.isUnlocked
-          ? const Color(0xFF101726)
-          : const Color(0xFF0A0D14);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(8, 6, w - 16, h - 12), const Radius.circular(12)),
-      chamberPaint,
-    );
+          ? const Color(0xFFFFFFFF)
+          : const Color(0xFFEDE6EB);
+    canvas.drawRRect(cardRect, chamberPaint);
 
-    // Chamber Border (glows when frenzy or high level)
+    // Chamber Border (Crisp silver, glows Rich Ruby when frenzy)
     final borderPaint = Paint()
       ..color = shaft.isUnlocked
-          ? (isFrenzyActive ? const Color(0xFFFF9100) : const Color(0xFF1E293B))
-          : const Color(0xFF151D2A)
+          ? (isFrenzyActive ? const Color(0xFFB81D36) : const Color(0xFFDCD2D8))
+          : const Color(0xFFD5CBD2)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = isFrenzyActive ? 2.5 : 1.5;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(8, 6, w - 16, h - 12), const Radius.circular(12)),
-      borderPaint,
-    );
+      ..strokeWidth = isFrenzyActive ? 2.0 : 1.2;
+    canvas.drawRRect(cardRect, borderPaint);
 
-    // Cavern Support Girder Pillars
+    // Structural Girder Pillars on sides
     final girderPaint = Paint()
-      ..color = const Color(0xFF1E2638)
-      ..strokeWidth = 3.0;
-    canvas.drawLine(Offset(24, 6), Offset(24, h - 6), girderPaint);
-    canvas.drawLine(Offset(w - 24, 6), Offset(w - 24, h - 6), girderPaint);
+      ..color = const Color(0xFFDDD3DB)
+      ..strokeWidth = 2.0;
+    canvas.drawLine(const Offset(18, 4), Offset(18, h - 4), girderPaint);
+    canvas.drawLine(Offset(w - 18, 4), Offset(w - 18, h - 4), girderPaint);
 
     if (!shaft.isUnlocked) {
       _renderLockedState(canvas, w, h);
       return;
     }
 
-    // 2. High-Tech Server Rack / Rig Station
-    _renderServerRack(canvas, 36, 18, 90, h - 36);
+    // 2. Hardware Server Rig Unit (Left section: w ~ 64px)
+    _renderServerRack(canvas, 24, 14, 64, h - 28);
 
-    // 3. Mining Ore Node & Animated Digger / Laser
-    _renderMiningStation(canvas, w - 110, 20, 80, h - 40);
+    // 3. Center Section: Floor Metrics & Name (Zero overlap with graphics)
+    _renderHeader(canvas, 96, 14);
 
-    // 4. Glowing Data Rail / Cables
-    _renderDataRails(canvas, 130, h / 2 + 10, w - 245);
+    // 4. Mining Extraction Node (Right section: contained within w - 80)
+    _renderMiningStation(canvas, w - 80, 14, 64, h - 28);
 
-    // 5. Floor Info Header (Floor Name, Level, Hashrate)
-    _renderHeader(canvas, 134, 16);
+    // 5. Bottom Guide Rail (Runs along floor baseboard, never cutting through text)
+    _renderDataRails(canvas, h - 14, w);
   }
 
   void _renderServerRack(Canvas canvas, double x, double y, double rw, double rh) {
     // Rack casing
-    final rackPaint = Paint()
-      ..color = const Color(0xFF0F172A)
-      ..style = PaintingStyle.fill;
-    final rackOutline = Paint()
-      ..color = const Color(0xFF334155)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-
     final rackRect = RRect.fromRectAndRadius(
       Rect.fromLTWH(x, y, rw, rh),
       const Radius.circular(6),
     );
-    canvas.drawRRect(rackRect, rackPaint);
-    canvas.drawRRect(rackRect, rackOutline);
+    canvas.drawRRect(rackRect, Paint()..color = const Color(0xFFF7F2F5));
+    canvas.drawRRect(
+      rackRect,
+      Paint()
+        ..color = const Color(0xFFD6CBD3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2,
+    );
 
-    // Server Blades (3 shelves)
-    final bladeH = (rh - 16) / 3;
-    for (int i = 0; i < 3; i++) {
-      final by = y + 8 + i * bladeH;
-      final bladeRect = Rect.fromLTWH(x + 6, by, rw - 12, bladeH - 4);
-      canvas.drawRect(
-        bladeRect,
-        Paint()..color = const Color(0xFF1E293B),
+    // 2 Clean Server Blade Bays
+    final bayH = (rh - 10) / 2;
+    for (int i = 0; i < 2; i++) {
+      final by = y + 3.5 + i * (bayH + 3);
+      final bayRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(x + 4, by, rw - 8, bayH),
+        const Radius.circular(4),
+      );
+      canvas.drawRRect(bayRect, Paint()..color = const Color(0xFFEBE3E8));
+
+      // Calm status LEDs
+      final isTop = i == 0;
+      final led1Color = isTop ? const Color(0xFF0284C7) : const Color(0xFFC78417);
+      final led2Color = isFrenzyActive
+          ? const Color(0xFFB81D36)
+          : (isTop ? const Color(0xFF098A55) : const Color(0xFF0284C7));
+
+      // LED 1: Steady
+      canvas.drawCircle(
+        Offset(x + 10, by + bayH / 2),
+        2.2,
+        Paint()..color = isPowered ? led1Color : const Color(0xFFB8ADB6),
       );
 
-      // Blinking RGB LEDs
-      for (int led = 0; led < 4; led++) {
-        final ledX = x + 12 + led * 8;
-        final ledY = by + bladeH / 2 - 2;
-        final isLedOn = sin(animTimer * (led + 2) * 3) > -0.2;
-        final ledColor = isFrenzyActive
-            ? const Color(0xFFFF5252)
-            : (led % 2 == 0 ? const Color(0xFF00E676) : const Color(0xFF00F2FE));
+      // LED 2: Smooth calm breathing pulse (no chaotic flickering)
+      final breathAlpha = isPowered ? (0.4 + 0.6 * ((sin(animTimer * 2.5 + i) + 1) / 2)) : 0.2;
+      canvas.drawCircle(
+        Offset(x + 17, by + bayH / 2),
+        2.2,
+        Paint()..color = led2Color.withValues(alpha: breathAlpha),
+      );
 
-        canvas.drawCircle(
-          Offset(ledX, ledY),
-          2.0,
-          Paint()..color = isLedOn ? ledColor : const Color(0xFF334155),
-        );
+      // Slat Vent Grills
+      final ventX = x + rw - 22;
+      final ventY = by + 6;
+      final ventW = 14.0;
+      final ventH = bayH - 12;
+
+      final slatPaint = Paint()
+        ..color = const Color(0xFFC2B6C0)
+        ..strokeWidth = 1.5;
+      for (int s = 0; s < 3; s++) {
+        final sy = ventY + (s + 0.5) * (ventH / 3);
+        canvas.drawLine(Offset(ventX, sy), Offset(ventX + ventW, sy), slatPaint);
       }
-
-      // Cooling Fan on right side of blade
-      final fanCenter = Offset(x + rw - 18, by + bladeH / 2 - 2);
-      _renderFan(canvas, fanCenter, 8.0);
     }
   }
 
-  void _renderFan(Canvas canvas, Offset center, double radius) {
-    // Fan ring
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()
-        ..color = const Color(0xFF0F172A)
-        ..style = PaintingStyle.fill,
+  void _renderHeader(Canvas canvas, double x, double y) {
+    // Floor Title
+    final cleanName = shaft.name.replaceFirst(RegExp(r'^Floor \d+:\s*'), '');
+    final titlePaint = TextPaint(
+      style: const TextStyle(
+        fontSize: 11.5,
+        fontWeight: FontWeight.w800,
+        color: Color(0xFF1E161C),
+        letterSpacing: 0.3,
+      ),
     );
-    canvas.drawCircle(
-      center,
-      radius,
+    titlePaint.render(
+      canvas,
+      'F${shaft.id + 1}: $cleanName',
+      Vector2(x, y),
+    );
+
+    // Level & Hashrate Capsule Badge
+    final pillRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(x, y + 18, 128, 18),
+      const Radius.circular(5),
+    );
+    canvas.drawRRect(pillRect, Paint()..color = const Color(0xFFF5EFF3));
+    canvas.drawRRect(
+      pillRect,
       Paint()
-        ..color = const Color(0xFF475569)
+        ..color = const Color(0xFFDDD4DC)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0,
     );
 
-    // Spinning Blades
-    final bladePaint = Paint()
-      ..color = isFrenzyActive ? const Color(0xFFFF9100) : const Color(0xFF38BDF8)
-      ..strokeWidth = 1.5;
+    final hrText = shaft.currentHashrate >= 1000
+        ? '${(shaft.currentHashrate / 1000).toStringAsFixed(1)} GH/s'
+        : '${shaft.currentHashrate.toStringAsFixed(1)} MH/s';
 
-    for (int b = 0; b < 3; b++) {
-      final angle = fanRotation + (b * (2 * pi / 3));
-      final tip = Offset(
-        center.dx + cos(angle) * (radius - 2),
-        center.dy + sin(angle) * (radius - 2),
+    final levelTextPaint = TextPaint(
+      style: const TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.w800,
+        color: Color(0xFFB81D36),
+      ),
+    );
+    levelTextPaint.render(canvas, 'LVL ${shaft.level}', Vector2(x + 6, y + 21));
+
+    final dotPaint = TextPaint(
+      style: const TextStyle(fontSize: 10, color: Color(0xFFA89CA6)),
+    );
+    dotPaint.render(canvas, '•', Vector2(x + 46, y + 21));
+
+    final hrTextPaint = TextPaint(
+      style: const TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.w800,
+        color: Color(0xFF098A55),
+      ),
+    );
+    hrTextPaint.render(canvas, '⚡ $hrText', Vector2(x + 56, y + 21));
+
+    // Status or Upgrade Mods
+    if (!isPowered) {
+      final standbyPaint = TextPaint(
+        style: const TextStyle(
+          fontSize: 9.5,
+          fontWeight: FontWeight.w700,
+          color: Color(0xFFDE5500),
+        ),
       );
-      canvas.drawLine(center, tip, bladePaint);
+      standbyPaint.render(canvas, '⚠️ STANDBY (0% POWER)', Vector2(x, y + 42));
+    } else {
+      final modPaint = TextPaint(
+        style: const TextStyle(
+          fontSize: 9.5,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF6B5F69),
+        ),
+      );
+      modPaint.render(
+        canvas,
+        '❄️ Fan L.${shaft.coolingLevel}  •  🔥 Boost L.${shaft.overclockLevel}',
+        Vector2(x, y + 42),
+      );
     }
   }
 
   void _renderMiningStation(Canvas canvas, double x, double y, double mw, double mh) {
-    // Crypto Crystal Ore Vein
-    final oreCenter = Offset(x + mw - 20, y + mh / 2);
-    final oreRadius = 16.0;
+    final centerY = y + mh / 2 - 2;
+    final crystalCenter = Offset(x + mw - 22, centerY);
+    final oreRadius = 13.0;
 
-    // Glowing aura
+    // Soft aura glow
+    final glowColor = isFrenzyActive
+        ? const Color(0xFFB81D36)
+        : (isPowered ? const Color(0xFFC78417) : const Color(0xFF9E929C));
     final glowPaint = Paint()
-      ..color = (isFrenzyActive ? const Color(0xFFFF9100) : const Color(0xFFF7931A)).withOpacity(0.35)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-    canvas.drawCircle(oreCenter, oreRadius + 4, glowPaint);
+      ..color = glowColor.withValues(alpha: isPowered ? 0.22 : 0.08)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    canvas.drawCircle(crystalCenter, oreRadius + 3, glowPaint);
 
-    // Ore polygon
+    // Faceted Hexagon Crystal
     final orePath = Path();
     for (int p = 0; p < 6; p++) {
       final a = p * (2 * pi / 6);
-      final r = oreRadius + (p % 2 == 0 ? 3 : -2);
-      final pt = Offset(oreCenter.dx + cos(a) * r, oreCenter.dy + sin(a) * r);
+      final r = oreRadius + (p % 2 == 0 ? 1.5 : -1.0);
+      final pt = Offset(crystalCenter.dx + cos(a) * r, crystalCenter.dy + sin(a) * r);
       if (p == 0) {
         orePath.moveTo(pt.dx, pt.dy);
       } else {
@@ -206,138 +267,132 @@ class ShaftComponent extends PositionComponent with TapCallbacks {
     orePath.close();
 
     final orePaint = Paint()
-      ..color = isFrenzyActive ? const Color(0xFFFFD54F) : const Color(0xFFF7931A)
+      ..color = isFrenzyActive
+          ? const Color(0xFFE29A26)
+          : (isPowered ? const Color(0xFFC78417) : const Color(0xFFB0A4AE))
       ..style = PaintingStyle.fill;
     canvas.drawPath(orePath, orePaint);
 
-    // ₿ insignia in crystal
+    // ₿ insignia in crystal center
     final btcPaint = TextPaint(
       style: const TextStyle(
-        fontSize: 13,
+        fontSize: 11,
         fontWeight: FontWeight.w900,
         color: Colors.white,
       ),
     );
-    btcPaint.render(canvas, '₿', Vector2(oreCenter.dx - 4, oreCenter.dy - 8));
+    btcPaint.render(canvas, '₿', Vector2(crystalCenter.dx - 4, crystalCenter.dy - 7));
 
-    // Animated Miner with Pickaxe / Laser
-    final minerX = x + 15;
-    final minerY = y + mh / 2;
-
-    // Miner Body (Cyber Digger in Neon Suit)
-    canvas.drawCircle(
-      Offset(minerX, minerY - 10),
-      7, // Head with helmet
-      Paint()..color = const Color(0xFF38BDF8),
+    // High-Tech Focused Laser Diode
+    final emitterX = x + 8;
+    final emitterRect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset(emitterX, centerY), width: 10, height: 16),
+      const Radius.circular(3),
     );
-    canvas.drawRect(
-      Rect.fromCenter(center: Offset(minerX, minerY + 6), width: 12, height: 16),
-      Paint()..color = const Color(0xFF1E293B),
+    canvas.drawRRect(emitterRect, Paint()..color = const Color(0xFF42373F));
+    canvas.drawRRect(
+      emitterRect,
+      Paint()
+        ..color = const Color(0xFF756772)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
     );
 
-    // Swinging Pickaxe Arm
-    canvas.save();
-    canvas.translate(minerX + 4, minerY - 4);
-    canvas.rotate(pickaxeSwing);
+    // Focused Laser Extraction Beam (active only when powered)
+    if (isPowered) {
+      final beamColor = isFrenzyActive ? const Color(0xFFB81D36) : const Color(0xFF0284C7);
+      final beamAlpha = 0.35 + 0.35 * ((sin(animTimer * 3.5) + 1) / 2);
 
-    // Pickaxe handle
-    final handlePaint = Paint()
-      ..color = const Color(0xFF94A3B8)
-      ..strokeWidth = 2.5;
-    canvas.drawLine(Offset.zero, const Offset(18, -4), handlePaint);
+      final beamPaint = Paint()
+        ..color = beamColor.withValues(alpha: beamAlpha)
+        ..strokeWidth = 2.0;
+      canvas.drawLine(
+        Offset(emitterX + 5, centerY),
+        Offset(crystalCenter.dx - oreRadius, centerY),
+        beamPaint,
+      );
 
-    // Pickaxe Head
-    final headPaint = Paint()
-      ..color = const Color(0xFFF7931A)
-      ..strokeWidth = 3.5;
-    canvas.drawLine(const Offset(18, -12), const Offset(18, 4), headPaint);
-
-    canvas.restore();
+      // Subtle emitter flare
+      canvas.drawCircle(
+        Offset(emitterX + 5, centerY),
+        2.5,
+        Paint()..color = beamColor.withValues(alpha: beamAlpha + 0.2),
+      );
+    }
   }
 
-  void _renderDataRails(Canvas canvas, double x, double y, double rw) {
-    // Rail line
-    final railPaint = Paint()
-      ..color = const Color(0xFF1E293B)
-      ..strokeWidth = 2.0;
-    canvas.drawLine(Offset(x, y), Offset(x + rw, y), railPaint);
+  void _renderDataRails(Canvas canvas, double y, double w) {
+    final startX = 26.0;
+    final endX = w - 26.0;
+    final railLen = endX - startX;
 
-    // Animated pulse packet traveling on rail
-    final pulsePos = (animTimer * 120.0) % rw;
-    final pulsePaint = Paint()
-      ..color = const Color(0xFF00F2FE)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-    canvas.drawCircle(Offset(x + pulsePos, y), 3.0, pulsePaint);
-  }
+    // Slim bottom track line
+    final trackPaint = Paint()
+      ..color = const Color(0xFFE5DDE3)
+      ..strokeWidth = 1.2;
+    canvas.drawLine(Offset(startX, y), Offset(endX, y), trackPaint);
 
-  void _renderHeader(Canvas canvas, double x, double y) {
-    // Shaft Title
-    final titlePaint = TextPaint(
-      style: const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
-    );
-    titlePaint.render(canvas, shaft.name, Vector2(x, y));
-
-    // Level Badge & Hashrate
-    final statsPaint = TextPaint(
-      style: TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: !isPowered
-            ? const Color(0xFFFF9100)
-            : (isFrenzyActive ? const Color(0xFFFF9100) : const Color(0xFF00E676)),
-      ),
-    );
-    final hrText = shaft.currentHashrate >= 1000
-        ? '${(shaft.currentHashrate / 1000).toStringAsFixed(2)} GH/s'
-        : '${shaft.currentHashrate.toStringAsFixed(1)} MH/s';
-    final statusText = !isPowered ? ' • ⚠️ STANDBY' : '';
-
-    statsPaint.render(
-      canvas,
-      'LVL ${shaft.level}  •  ⚡ $hrText$statusText',
-      Vector2(x, y + 17),
-    );
-
-    // Cooling & Overclock indicators
-    final modPaint = TextPaint(
-      style: const TextStyle(
-        fontSize: 9.5,
-        color: Color(0xFF94A3B8),
-      ),
-    );
-    modPaint.render(
-      canvas,
-      '❄️ Fan Lv.${shaft.coolingLevel}  🔥 Boost Lv.${shaft.overclockLevel}',
-      Vector2(x, y + 33),
-    );
+    if (isPowered && railLen > 0) {
+      // Gentle calm data packet along bottom baseboard (35 px/s)
+      final pulsePos = (animTimer * 35.0) % railLen;
+      final pulsePaint = Paint()
+        ..color = (isFrenzyActive ? const Color(0xFFB81D36) : const Color(0xFF0284C7)).withValues(alpha: 0.7);
+      canvas.drawCircle(Offset(startX + pulsePos, y), 2.0, pulsePaint);
+    }
   }
 
   void _renderLockedState(Canvas canvas, double w, double h) {
-    // Dimmed Locked Floor with Lock Icon
-    final lockPaint = TextPaint(
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF64748B),
-      ),
+    // Center lock container
+    final lockBadgeRect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset(w / 2, h / 2 - 12), width: 34, height: 30),
+      const Radius.circular(8),
     );
-    lockPaint.render(canvas, '🔒 ${shaft.name}', Vector2(w / 2 - 75, h / 2 - 16));
+    canvas.drawRRect(
+      lockBadgeRect,
+      Paint()..color = const Color(0xFFE2D9E0),
+    );
+    canvas.drawRRect(
+      lockBadgeRect,
+      Paint()
+        ..color = const Color(0xFFCDC2CB)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
+    );
 
-    final unlockPaint = TextPaint(
+    // Lock emoji icon in badge
+    final iconPaint = TextPaint(
+      style: const TextStyle(fontSize: 15),
+    );
+    iconPaint.render(canvas, '🔒', Vector2(w / 2 - 8, h / 2 - 21));
+
+    // Floor Name Locked Text
+    final cleanName = shaft.name.replaceFirst(RegExp(r'^Floor \d+:\s*'), '').toUpperCase();
+    final lockTitlePaint = TextPaint(
       style: const TextStyle(
-        fontSize: 11,
-        color: Color(0xFF00F2FE),
-        fontWeight: FontWeight.w600,
+        fontSize: 11.5,
+        fontWeight: FontWeight.w800,
+        color: Color(0xFF7A6F78),
+        letterSpacing: 0.5,
       ),
     );
-    unlockPaint.render(
+    lockTitlePaint.render(
       canvas,
-      'Tap or Visit Hardware to Unlock (${shaft.baseCost.toInt()} SAT)',
-      Vector2(w / 2 - 110, h / 2 + 6),
+      'FLOOR ${shaft.id + 1}: $cleanName (LOCKED)',
+      Vector2(w / 2 - 95, h / 2 + 10),
+    );
+
+    // Unlock instruction (non-clickable, indicates to visit Rigs tab)
+    final unlockSubPaint = TextPaint(
+      style: const TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF9E3B4B),
+      ),
+    );
+    unlockSubPaint.render(
+      canvas,
+      'Unlock in Rigs tab  •  🪙 ${shaft.baseCost.toInt()} SAT',
+      Vector2(w / 2 - 82, h / 2 + 25),
     );
   }
 }

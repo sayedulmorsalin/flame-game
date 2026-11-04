@@ -8,7 +8,7 @@ import '../theme/app_theme.dart';
 class MarketScreen extends StatefulWidget {
   final GameState gameState;
 
-  const MarketScreen({Key? key, required this.gameState}) : super(key: key);
+  const MarketScreen({super.key, required this.gameState});
 
   @override
   State<MarketScreen> createState() => _MarketScreenState();
@@ -32,7 +32,7 @@ class _MarketScreenState extends State<MarketScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cash Portfolio Header
+          // Cash Portfolio Header (Flexible to prevent any overflow)
           Container(
             padding: const EdgeInsets.all(16),
             decoration: AppTheme.cyberCardDecoration(
@@ -42,38 +42,50 @@ class _MarketScreenState extends State<MarketScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'TOTAL SIMULATED CASH',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.textMuted),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      currencyFormat.format(widget.gameState.virtualUsd),
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                        color: AppTheme.greenHash,
-                        letterSpacing: 0.5,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'TOTAL SIMULATED CASH',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textSecondary,
+                          letterSpacing: 0.6,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        currencyFormat.format(widget.gameState.virtualUsd),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.greenHash,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceLight,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppTheme.surfaceBorder),
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('TOTAL TRADES', style: TextStyle(fontSize: 9, color: AppTheme.textMuted)),
+                      const Text('TOTAL TRADES', style: TextStyle(fontSize: 8.5, color: AppTheme.textMuted, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 2),
                       Text(
                         '${widget.gameState.totalTradesCount}',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                       ),
                     ],
                   ),
@@ -82,7 +94,7 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           // Crypto Asset Selector Tabs
           SingleChildScrollView(
@@ -97,16 +109,24 @@ class _MarketScreenState extends State<MarketScreen> {
                   padding: const EdgeInsets.only(right: 8),
                   child: InkWell(
                     onTap: () => setState(() => selectedAssetIndex = idx),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected ? AppTheme.surfaceLight : AppTheme.surface,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSelected ? AppTheme.cyanNeon : AppTheme.surfaceBorder,
+                          color: isSelected ? AppTheme.richRuby : AppTheme.surfaceBorder,
                           width: isSelected ? 2 : 1,
                         ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: AppTheme.richRuby.withValues(alpha: 0.15),
+                                  blurRadius: 8,
+                                )
+                              ]
+                            : null,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,14 +137,18 @@ class _MarketScreenState extends State<MarketScreen> {
                               const SizedBox(width: 6),
                               Text(
                                 asset.symbol,
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.textPrimary,
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
                             currencyFormat.format(asset.priceUsd),
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textSecondary),
                           ),
                           Text(
                             '${isPositive ? '+' : ''}${asset.change24h.toStringAsFixed(1)}%',
@@ -143,36 +167,39 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Live Price Candlestick / Line Chart
+          // Live Price Candlestick / Line Chart Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: AppTheme.cyberCardDecoration(
-              borderColor: AppTheme.surfaceBorder,
-            ),
+            decoration: AppTheme.cyberCardDecoration(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '${selectedAsset.name} (${selectedAsset.symbol}) 24H TICKER',
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+                    Expanded(
+                      child: Text(
+                        '${selectedAsset.name} (${selectedAsset.symbol}) 24H TICKER',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                      ),
                     ),
+                    const SizedBox(width: 6),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: selectedAsset.change24h >= 0
-                            ? AppTheme.greenHash.withOpacity(0.15)
-                            : AppTheme.redOverheat.withOpacity(0.15),
+                            ? AppTheme.greenHash.withValues(alpha: 0.12)
+                            : AppTheme.redOverheat.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         'LIVE MARKET',
                         style: TextStyle(
-                          fontSize: 9,
+                          fontSize: 8.5,
                           fontWeight: FontWeight.bold,
                           color: selectedAsset.change24h >= 0 ? AppTheme.greenHash : AppTheme.redOverheat,
                         ),
@@ -180,10 +207,10 @@ class _MarketScreenState extends State<MarketScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 // Chart Canvas
                 SizedBox(
-                  height: 140,
+                  height: 135,
                   width: double.infinity,
                   child: CustomPaint(
                     painter: _MarketChartPainter(
@@ -196,13 +223,13 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Sell Mined Satoshis Interface
+          // Sell Mined Satoshis Interface Card
           Container(
             padding: const EdgeInsets.all(16),
             decoration: AppTheme.cyberCardDecoration(
-              borderColor: AppTheme.bitcoinGold.withOpacity(0.6),
+              borderColor: AppTheme.bitcoinGold.withValues(alpha: 0.6),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,16 +239,16 @@ class _MarketScreenState extends State<MarketScreen> {
                     Text('⚡ ', style: TextStyle(fontSize: 16)),
                     Text(
                       'SELL MINED SATOSHIS FOR USD',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 const Text(
                   'Take profit when Bitcoin spikes! Sell Satoshis at live exchange rates.',
-                  style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                  style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
 
                 // Percentage Buttons (25%, 50%, 100%)
                 Row(
@@ -233,19 +260,21 @@ class _MarketScreenState extends State<MarketScreen> {
                         child: OutlinedButton(
                           onPressed: () => setState(() => sellPercentage = pct),
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: isChosen ? AppTheme.bitcoinGold : Colors.transparent,
-                            foregroundColor: isChosen ? Colors.black : Colors.white,
+                            backgroundColor: isChosen ? AppTheme.richRuby : Colors.transparent,
+                            foregroundColor: isChosen ? Colors.white : AppTheme.textPrimary,
                             side: BorderSide(
-                              color: isChosen ? AppTheme.bitcoinGold : AppTheme.surfaceBorder,
+                              color: isChosen ? AppTheme.richRuby : AppTheme.surfaceBorder,
+                              width: isChosen ? 1.5 : 1,
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                           child: Text(
                             '${(pct * 100).toInt()}%',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: isChosen ? Colors.black : Colors.white,
+                              color: isChosen ? Colors.white : AppTheme.textPrimary,
                             ),
                           ),
                         ),
@@ -254,38 +283,50 @@ class _MarketScreenState extends State<MarketScreen> {
                   }).toList(),
                 ),
 
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
 
                 // Summary
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceLight,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppTheme.surfaceBorderSubtle),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('SELLING', style: TextStyle(fontSize: 10, color: AppTheme.textMuted)),
-                          Text(
-                            '${satoshiFormat.format(sellSatoshisAmount.toInt())} SAT',
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppTheme.bitcoinGold),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('SELLING', style: TextStyle(fontSize: 9.5, color: AppTheme.textMuted, fontWeight: FontWeight.bold)),
+                            Text(
+                              '${satoshiFormat.format(sellSatoshisAmount.toInt())} SAT',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold, color: AppTheme.bitcoinGold),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Icon(Icons.arrow_forward, color: AppTheme.textMuted, size: 18),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Text('RECEIVING', style: TextStyle(fontSize: 10, color: AppTheme.textMuted)),
-                          Text(
-                            currencyFormat.format(estimatedUsd),
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.greenHash),
-                          ),
-                        ],
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 6),
+                        child: Icon(Icons.arrow_forward, color: AppTheme.textMuted, size: 18),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Text('RECEIVING', style: TextStyle(fontSize: 9.5, color: AppTheme.textMuted, fontWeight: FontWeight.bold)),
+                            Text(
+                              currencyFormat.format(estimatedUsd),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.bold, color: AppTheme.greenHash),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -311,12 +352,18 @@ class _MarketScreenState extends State<MarketScreen> {
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.bitcoinGold,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+                      backgroundColor: AppTheme.richRuby,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppTheme.surfaceSecondary,
+                      disabledForegroundColor: AppTheme.textMuted,
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 2,
                     ),
-                    child: const Text('EXECUTE TRADE ORDER'),
+                    child: const Text(
+                      'EXECUTE TRADE ORDER',
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 0.6),
+                    ),
                   ),
                 ),
               ],
@@ -365,7 +412,7 @@ class _MarketChartPainter extends CustomPainter {
     fillPath.lineTo(size.width, size.height);
     fillPath.close();
 
-    final chartColor = isPositive ? const Color(0xFF00E676) : const Color(0xFFFF5252);
+    final chartColor = isPositive ? AppTheme.greenHash : AppTheme.redOverheat;
 
     // Gradient Fill
     final fillPaint = Paint()
@@ -373,8 +420,8 @@ class _MarketChartPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          chartColor.withOpacity(0.35),
-          chartColor.withOpacity(0.0),
+          chartColor.withValues(alpha: 0.22),
+          chartColor.withValues(alpha: 0.0),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     canvas.drawPath(fillPath, fillPaint);

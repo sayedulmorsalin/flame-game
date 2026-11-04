@@ -38,7 +38,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
   }
 
   void _tickNeedle() {
-    if (_isGameOver) return;
+    if (_isGameOver || !mounted) return;
     setState(() {
       final speed = 0.032 + (5 - _attemptsRemaining) * 0.006;
       if (_movingRight) {
@@ -133,7 +133,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF070B14),
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         backgroundColor: AppTheme.surface,
         leading: IconButton(
@@ -154,23 +154,23 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
             Text('🎯 ', style: TextStyle(fontSize: 18)),
             Text(
               'PRECISION LASER DRILL',
-              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.orangeFrenzy),
+              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.richRuby),
             ),
           ],
         ),
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Column(
               children: [
                 // 1. Attempts & Score Status Header
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(14),
                   decoration: AppTheme.cyberCardDecoration(
-                    borderColor: AppTheme.orangeFrenzy,
-                    glowColor: AppTheme.orangeFrenzy,
+                    borderColor: AppTheme.richRuby,
+                    glowColor: AppTheme.richRuby,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -183,16 +183,16 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.orangeFrenzy,
-                              letterSpacing: 0.8,
+                              color: AppTheme.richRuby,
+                              letterSpacing: 0.6,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 3),
                           Text(
                             'Strikes Remaining: $_attemptsRemaining / 5',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Colors.white,
+                              color: AppTheme.textSecondary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -208,7 +208,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                         child: Text(
                           '+$_totalScore SAT',
                           style: const TextStyle(
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: AppTheme.bitcoinGold,
                           ),
@@ -218,7 +218,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 24),
 
                 // 2. Feedback Text Banner
                 AnimatedOpacity(
@@ -227,14 +227,14 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: _lastHitColor.withValues(alpha: 0.15),
+                      color: _lastHitColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: _lastHitColor),
                     ),
                     child: Text(
                       _lastHitResult,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.w900,
                         color: _lastHitColor,
                       ),
@@ -242,38 +242,28 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 28),
 
                 // 3. Precision Laser Meter
                 Container(
                   width: double.infinity,
-                  height: 120,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppTheme.surfaceBorder, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        blurRadius: 16,
-                      ),
-                    ],
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  decoration: AppTheme.cyberCardDecoration(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Target labels
+                      // Target labels (Zero overflow)
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('MISS', style: TextStyle(fontSize: 10, color: AppTheme.textMuted)),
-                          Text('GOOD', style: TextStyle(fontSize: 10, color: AppTheme.cyanNeon)),
-                          Text('CRITICAL SWEET SPOT',
-                              style: TextStyle(
-                                  fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.bitcoinGold)),
-                          Text('GOOD', style: TextStyle(fontSize: 10, color: AppTheme.cyanNeon)),
-                          Text('MISS', style: TextStyle(fontSize: 10, color: AppTheme.textMuted)),
+                          Text('MISS', style: TextStyle(fontSize: 9.5, color: AppTheme.textMuted, fontWeight: FontWeight.bold)),
+                          Text('GOOD', style: TextStyle(fontSize: 9.5, color: AppTheme.cyanNeon, fontWeight: FontWeight.bold)),
+                          Text(
+                            '⚡ CRIT ZONE ⚡',
+                            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w900, color: AppTheme.richRuby),
+                          ),
+                          Text('GOOD', style: TextStyle(fontSize: 9.5, color: AppTheme.cyanNeon, fontWeight: FontWeight.bold)),
+                          Text('MISS', style: TextStyle(fontSize: 9.5, color: AppTheme.textMuted, fontWeight: FontWeight.bold)),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -292,7 +282,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                                 height: 32,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
-                                  color: const Color(0xFF0E131F),
+                                  color: AppTheme.surfaceSecondary,
                                   border: Border.all(color: AppTheme.surfaceBorder),
                                 ),
                               ),
@@ -305,7 +295,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                                 bottom: 0,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: AppTheme.cyanNeon.withValues(alpha: 0.25),
+                                    color: AppTheme.cyanNeon.withValues(alpha: 0.18),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -319,13 +309,13 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                                 bottom: 0,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: AppTheme.greenHash.withValues(alpha: 0.4),
+                                    color: AppTheme.greenHash.withValues(alpha: 0.25),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
                               ),
 
-                              // Critical Sweet Spot (Gold)
+                              // Critical Sweet Spot (Ruby)
                               Positioned(
                                 left: barWidth * 0.44,
                                 width: barWidth * 0.12,
@@ -333,14 +323,12 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                                 bottom: 0,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [Color(0xFFFFB300), AppTheme.bitcoinGold],
-                                    ),
+                                    gradient: AppTheme.rubyGradient,
                                     borderRadius: BorderRadius.circular(6),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppTheme.bitcoinGold.withValues(alpha: 0.8),
-                                        blurRadius: 10,
+                                        color: AppTheme.richRuby.withValues(alpha: 0.5),
+                                        blurRadius: 8,
                                       ),
                                     ],
                                   ),
@@ -361,12 +349,13 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                                 child: Container(
                                   width: 8,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: AppTheme.richRuby,
                                     borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(color: Colors.white, width: 1.5),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppTheme.orangeFrenzy.withValues(alpha: 0.9),
-                                        blurRadius: 12,
+                                        color: AppTheme.richRuby.withValues(alpha: 0.6),
+                                        blurRadius: 10,
                                         spreadRadius: 2,
                                       ),
                                     ],
@@ -381,24 +370,22 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 32),
 
                 // 4. Strike Button
                 GestureDetector(
                   onTap: _strike,
                   child: Container(
                     width: double.infinity,
-                    height: 64,
+                    height: 56,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.orangeFrenzy, AppTheme.redOverheat],
-                      ),
+                      gradient: AppTheme.rubyGradient,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.orangeFrenzy.withValues(alpha: 0.5),
-                          blurRadius: 16,
-                          spreadRadius: 2,
+                          color: AppTheme.richRuby.withValues(alpha: 0.35),
+                          blurRadius: 14,
+                          spreadRadius: 1,
                         ),
                       ],
                       border: Border.all(color: Colors.white, width: 2),
@@ -407,15 +394,15 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.bolt, color: Colors.white, size: 28),
+                          Icon(Icons.bolt, color: Colors.white, size: 26),
                           SizedBox(width: 8),
                           Text(
                             'STRIKE DRILL NOW!',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w900,
                               color: Colors.white,
-                              letterSpacing: 1.2,
+                              letterSpacing: 1.0,
                             ),
                           ),
                         ],
@@ -423,7 +410,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -432,47 +419,47 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
           if (_isGameOver)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withValues(alpha: 0.85),
+                color: Colors.black.withValues(alpha: 0.65),
                 child: Center(
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 24),
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(22),
                     decoration: AppTheme.cyberCardDecoration(
-                      borderColor: AppTheme.orangeFrenzy,
-                      glowColor: AppTheme.orangeFrenzy,
+                      borderColor: AppTheme.richRuby,
+                      glowColor: AppTheme.richRuby,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text('🎯', style: TextStyle(fontSize: 48)),
+                        const Text('🎯', style: TextStyle(fontSize: 44)),
                         const SizedBox(height: 8),
                         const Text(
                           'DRILL CYCLE COMPLETE!',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            letterSpacing: 1.0,
+                            color: AppTheme.textPrimary,
+                            letterSpacing: 0.8,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
                             color: AppTheme.surfaceLight,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.surfaceBorder),
+                            border: Border.all(color: AppTheme.surfaceBorderSubtle),
                           ),
                           child: Column(
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Total Satoshis:', style: TextStyle(color: AppTheme.textMuted)),
+                                  const Text('Total Satoshis:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                   Text(
                                     '+$_totalScore SAT',
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w900,
                                       color: AppTheme.bitcoinGold,
                                     ),
@@ -483,7 +470,7 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                               const Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Power Grid Recharged:', style: TextStyle(color: AppTheme.textMuted)),
+                                  Text('Power Grid Recharged:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                   Text(
                                     '+35% ⚡',
                                     style: TextStyle(
@@ -497,18 +484,18 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         Row(
                           children: [
                             Expanded(
                               child: OutlinedButton(
                                 onPressed: _restartGame,
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
                                   side: const BorderSide(color: AppTheme.surfaceBorder),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
-                                child: const Text('RETRY', style: TextStyle(color: Colors.white)),
+                                child: const Text('RETRY', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -516,15 +503,18 @@ class _PrecisionDrillGameState extends State<PrecisionDrillGame> with SingleTick
                               child: ElevatedButton(
                                 onPressed: widget.onGameOver,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.bitcoinGold,
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  backgroundColor: AppTheme.richRuby,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  elevation: 2,
                                 ),
                                 child: const Text(
                                   'CLAIM COINS',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.w900,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),

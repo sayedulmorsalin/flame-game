@@ -7,10 +7,10 @@ class AirdropModal extends StatelessWidget {
   final VoidCallback onDismiss;
 
   const AirdropModal({
-    Key? key,
+    super.key,
     required this.airdropData,
     required this.onDismiss,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class AirdropModal extends StatelessWidget {
     } else if (type == 'FRENZY') {
       contentText = '12s INSTANT OVERCLOCK FRENZY 3X';
       emoji = '⚡';
-      accentColor = AppTheme.orangeFrenzy;
+      accentColor = AppTheme.richRuby;
     } else {
       contentText = '2.5X HASHRATE BOOST FOR 45s';
       emoji = '🚀';
@@ -39,9 +39,9 @@ class AirdropModal extends StatelessWidget {
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(22),
         decoration: AppTheme.cyberCardDecoration(
           borderColor: accentColor,
           glowColor: accentColor,
@@ -49,55 +49,56 @@ class AirdropModal extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 48)),
-            const SizedBox(height: 12),
+            Text(emoji, style: const TextStyle(fontSize: 44)),
+            const SizedBox(height: 10),
             Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.w900,
                 color: accentColor,
-                letterSpacing: 1.2,
+                letterSpacing: 1.0,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             const Text(
               'Airdrop drone intercepted successfully! You unlocked:',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
+              style: TextStyle(fontSize: 12.5, color: AppTheme.textSecondary),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceLight,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: accentColor.withOpacity(0.5)),
+                border: Border.all(color: accentColor.withValues(alpha: 0.4)),
               ),
               child: Text(
                 contentText,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                   color: accentColor,
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: onDismiss,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  textStyle: const TextStyle(fontWeight: FontWeight.w900),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 2,
                 ),
-                child: const Text('CLAIM REWARD'),
+                child: const Text('CLAIM REWARD', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
               ),
             ),
           ],

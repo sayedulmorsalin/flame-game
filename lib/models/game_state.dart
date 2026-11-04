@@ -438,8 +438,8 @@ class GameState extends ChangeNotifier {
     }
 
     // Auto-tapper robot manager only runs when rigs have power
-    final robo = superMiners.firstWhere((m) => m.id == 'miner_robo');
-    if (robo.isUnlocked && isRigPowered) {
+    final roboMatches = superMiners.where((m) => m.id == 'miner_robo');
+    if (roboMatches.isNotEmpty && roboMatches.first.isUnlocked && isRigPowered) {
       final autoEarned = tapPower * 0.6 * dt;
       satoshis += autoEarned;
       lifetimeSatoshisMined += autoEarned;
@@ -563,9 +563,9 @@ class GameState extends ChangeNotifier {
     double usdGained = btcAmount * btcPrice;
 
     // Check Bull miner bonus
-    final bull = superMiners.firstWhere((m) => m.id == 'miner_bull');
-    if (bull.isUnlocked) {
-      usdGained *= bull.currentMultiplier;
+    final bullMatches = superMiners.where((m) => m.id == 'miner_bull');
+    if (bullMatches.isNotEmpty && bullMatches.first.isUnlocked) {
+      usdGained *= bullMatches.first.currentMultiplier;
     }
 
     virtualUsd += usdGained;

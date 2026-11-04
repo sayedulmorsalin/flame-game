@@ -7,7 +7,7 @@ import '../theme/app_theme.dart';
 class QuestsScreen extends StatelessWidget {
   final GameState gameState;
 
-  const QuestsScreen({Key? key, required this.gameState}) : super(key: key);
+  const QuestsScreen({super.key, required this.gameState});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class QuestsScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       children: [
-        // 7-Day Daily Login Streak
+        // 7-Day Daily Login Streak Card
         Container(
           padding: const EdgeInsets.all(16),
           decoration: AppTheme.cyberCardDecoration(
@@ -37,19 +37,19 @@ class QuestsScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.bitcoinGold,
-                          letterSpacing: 0.8,
+                          color: AppTheme.textPrimary,
+                          letterSpacing: 0.6,
                         ),
                       ),
                     ],
                   ),
                   Text(
                     'STREAK: DAY 1',
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.cyanNeon),
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.richRuby),
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -60,30 +60,38 @@ class QuestsScreen extends StatelessWidget {
 
                     return Container(
                       margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
                       decoration: BoxDecoration(
-                        color: isToday ? AppTheme.bitcoinGold.withOpacity(0.18) : AppTheme.surfaceLight,
-                        borderRadius: BorderRadius.circular(8),
+                        color: isToday ? AppTheme.surfaceLight : AppTheme.surface,
+                        borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isToday ? AppTheme.bitcoinGold : AppTheme.surfaceBorder,
+                          color: isToday ? AppTheme.richRuby : AppTheme.surfaceBorder,
                           width: isToday ? 2 : 1,
                         ),
+                        boxShadow: isToday
+                            ? [
+                                BoxShadow(
+                                  color: AppTheme.richRuby.withValues(alpha: 0.15),
+                                  blurRadius: 6,
+                                ),
+                              ]
+                            : null,
                       ),
                       child: Column(
                         children: [
-                          Text('DAY $day', style: const TextStyle(fontSize: 10, color: AppTheme.textMuted)),
-                          const SizedBox(height: 4),
+                          Text('DAY $day', style: const TextStyle(fontSize: 9.5, color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 3),
                           Text(
                             day == 7 ? '🎁' : '🪙',
                             style: const TextStyle(fontSize: 18),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 3),
                           Text(
                             format.format(reward),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: isToday ? AppTheme.bitcoinGold : Colors.white,
+                              color: isToday ? AppTheme.richRuby : AppTheme.textPrimary,
                             ),
                           ),
                         ],
@@ -96,30 +104,30 @@ class QuestsScreen extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
 
         // Time Warp Quick Booster Card
         Container(
           padding: const EdgeInsets.all(16),
           decoration: AppTheme.cyberCardDecoration(
-            borderColor: AppTheme.cyanNeon.withOpacity(0.5),
+            borderColor: AppTheme.cyanNeon.withValues(alpha: 0.5),
           ),
           child: Row(
             children: [
-              const Text('⌛', style: TextStyle(fontSize: 32)),
-              const SizedBox(width: 14),
-              Expanded(
+              const Text('⌛', style: TextStyle(fontSize: 30)),
+              const SizedBox(width: 12),
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'QUANTUM TIME WARP (1 HR)',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
+                    SizedBox(height: 2),
+                    Text(
                       'Instantly accelerate 3,600s of idle hashrate mining',
-                      style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                      style: TextStyle(fontSize: 10.5, color: AppTheme.textSecondary),
                     ),
                   ],
                 ),
@@ -138,11 +146,12 @@ class QuestsScreen extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.cyanNeon,
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  elevation: 2,
                 ),
-                child: const Text('WARP'),
+                child: const Text('WARP', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11)),
               ),
             ],
           ),
@@ -156,7 +165,7 @@ class QuestsScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppTheme.textPrimary,
             letterSpacing: 0.8,
           ),
         ),
@@ -181,12 +190,12 @@ class QuestsScreen extends StatelessWidget {
                     children: [
                       Text(
                         quest.title,
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         quest.description,
-                        style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                        style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                       ),
                       const SizedBox(height: 8),
                       // Progress Bar
@@ -194,7 +203,7 @@ class QuestsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                         child: Container(
                           height: 5,
-                          color: AppTheme.surfaceLight,
+                          color: AppTheme.surfaceSecondary,
                           child: LinearProgressIndicator(
                             value: quest.progress,
                             backgroundColor: Colors.transparent,
@@ -212,10 +221,10 @@ class QuestsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 12),
                 // Claim Button
                 SizedBox(
-                  width: 90,
+                  width: 88,
                   child: ElevatedButton(
                     onPressed: isClaimable
                         ? () {
@@ -227,11 +236,16 @@ class QuestsScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isClaimable
                           ? AppTheme.greenHash
-                          : (quest.isClaimed ? AppTheme.surfaceLight : AppTheme.surfaceLight),
-                      foregroundColor: isClaimable ? Colors.black : AppTheme.textMuted,
+                          : AppTheme.surfaceSecondary,
+                      foregroundColor: isClaimable ? Colors.white : AppTheme.textMuted,
+                      disabledBackgroundColor: AppTheme.surfaceSecondary,
+                      disabledForegroundColor: AppTheme.textMuted,
                       padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      elevation: isClaimable ? 2 : 0,
                     ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           quest.isClaimed
@@ -243,7 +257,9 @@ class QuestsScreen extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             '+${format.format(quest.rewardSatoshis.toInt())} SAT',
-                            style: const TextStyle(fontSize: 9),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ],

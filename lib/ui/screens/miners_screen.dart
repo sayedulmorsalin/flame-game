@@ -8,12 +8,12 @@ import '../theme/app_theme.dart';
 class MinersScreen extends StatelessWidget {
   final GameState gameState;
 
-  const MinersScreen({Key? key, required this.gameState}) : super(key: key);
+  const MinersScreen({super.key, required this.gameState});
 
   Color _getRarityColor(MinerRarity rarity) {
     switch (rarity) {
       case MinerRarity.common:
-        return const Color(0xFF94A3B8);
+        return AppTheme.silverMetallic;
       case MinerRarity.rare:
         return AppTheme.cyanNeon;
       case MinerRarity.epic:
@@ -76,22 +76,22 @@ class MinersScreen extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(14),
           decoration: AppTheme.cyberCardDecoration(
-            borderColor: miner.isUnlocked ? rarityColor.withOpacity(0.5) : AppTheme.surfaceBorder,
+            borderColor: miner.isUnlocked ? rarityColor.withValues(alpha: 0.5) : AppTheme.surfaceBorder,
             glowColor: miner.isUnlocked ? rarityColor : null,
           ),
           child: Row(
             children: [
               // Avatar with Rarity Ring
               Container(
-                width: 52,
-                height: 52,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppTheme.surfaceLight,
                   border: Border.all(color: rarityColor, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: rarityColor.withOpacity(0.3),
+                      color: rarityColor.withValues(alpha: 0.25),
                       blurRadius: 8,
                     ),
                   ],
@@ -99,41 +99,45 @@ class MinersScreen extends StatelessWidget {
                 child: Center(
                   child: Text(
                     _getMinerAvatar(miner.id),
-                    style: const TextStyle(fontSize: 26),
+                    style: const TextStyle(fontSize: 24),
                   ),
                 ),
               ),
 
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
 
-              // Miner Info
+              // Miner Info (Flexible to prevent any header overlap)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text(
-                          miner.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        Flexible(
+                          child: Text(
+                            miner.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textPrimary,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: rarityColor.withOpacity(0.15),
+                            color: rarityColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: rarityColor.withOpacity(0.4)),
+                            border: Border.all(color: rarityColor.withValues(alpha: 0.4)),
                           ),
                           child: Text(
                             _getRarityLabel(miner.rarity),
                             style: TextStyle(
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.w900,
                               color: rarityColor,
                             ),
                           ),
@@ -143,13 +147,17 @@ class MinersScreen extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       miner.title,
-                      style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       miner.description,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10.5,
                         color: rarityColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -173,7 +181,7 @@ class MinersScreen extends StatelessWidget {
 
               // Action Button (Hire or Level Up)
               SizedBox(
-                width: 95,
+                width: 90,
                 child: ElevatedButton(
                   onPressed: canAfford
                       ? () {
@@ -183,20 +191,26 @@ class MinersScreen extends StatelessWidget {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: canAfford ? rarityColor : AppTheme.surfaceLight,
-                    foregroundColor: canAfford ? Colors.black : AppTheme.textMuted,
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    backgroundColor: canAfford ? rarityColor : AppTheme.surfaceSecondary,
+                    foregroundColor: canAfford ? Colors.white : AppTheme.textMuted,
+                    disabledBackgroundColor: AppTheme.surfaceSecondary,
+                    disabledForegroundColor: AppTheme.textMuted,
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    elevation: canAfford ? 2 : 0,
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         miner.isUnlocked ? 'LEVEL UP' : 'HIRE',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
+                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${format.format(cost.toInt())} SAT',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
                       ),
                     ],

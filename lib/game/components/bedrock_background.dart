@@ -14,24 +14,24 @@ class BedrockBackgroundComponent extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
 
-    // Deep Cyber Dark Gradient
+    // Luxury Light Reddish-Gray Silver Bedrock Gradient
     final rect = Rect.fromLTWH(0, 0, worldWidth, worldHeight);
     final bgPaint = Paint()
       ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Color(0xFF07090E),
-          Color(0xFF0B0F19),
-          Color(0xFF0F1523),
-          Color(0xFF080B12),
+          Color(0xFFF2ECEF),
+          Color(0xFFEBE4E8),
+          Color(0xFFE1D9DF),
+          Color(0xFFD8CFD6),
         ],
       ).createShader(rect);
     canvas.drawRect(rect, bgPaint);
 
-    // Subtle Perspective Subterranean Cyber Grid Lines
+    // Subtle Perspective Subterranean Grid Lines
     final gridPaint = Paint()
-      ..color = const Color(0xFF1E293B).withOpacity(0.3)
+      ..color = const Color(0xFFC7BCC4).withValues(alpha: 0.4)
       ..strokeWidth = 1.0;
 
     // Horizontal grid lines
@@ -44,9 +44,9 @@ class BedrockBackgroundComponent extends PositionComponent {
       canvas.drawLine(Offset(x, 0), Offset(x, worldHeight), gridPaint);
     }
 
-    // Glowing Neon Vertical Cables on the sides
+    // Rich Rose-Gold / Ruby Vertical Rails on the sides
     final cablePaint = Paint()
-      ..color = const Color(0xFF00F2FE).withOpacity(0.2)
+      ..color = const Color(0xFFBD7B89).withValues(alpha: 0.4)
       ..strokeWidth = 2.0;
     canvas.drawLine(const Offset(6, 0), Offset(6, worldHeight), cablePaint);
     canvas.drawLine(Offset(worldWidth - 6, 0), Offset(worldWidth - 6, worldHeight), cablePaint);

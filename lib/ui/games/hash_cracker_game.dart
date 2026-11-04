@@ -41,17 +41,39 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
   bool _wonGame = false;
   int _totalSatoshisWon = 0;
 
+  Timer? _sequenceTimer;
+  Timer? _tapTimer;
+  Timer? _nextRoundTimer;
+  int _sequencePlaybackIndex = 0;
+
   @override
   void initState() {
     super.initState();
     _startRound();
   }
 
+  @override
+  void dispose() {
+    _clearAllTimers();
+    super.dispose();
+  }
+
+  void _clearAllTimers() {
+    _sequenceTimer?.cancel();
+    _sequenceTimer = null;
+    _tapTimer?.cancel();
+    _tapTimer = null;
+    _nextRoundTimer?.cancel();
+    _nextRoundTimer = null;
+  }
+
   void _startRound() {
+    _clearAllTimers();
     setState(() {
       _sequence.clear();
       _playerIndex = 0;
       _isPlayingSequence = true;
+      _litNodeIndex = -1;
     });
 
     final rand = Random();
@@ -60,25 +82,30 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
       _sequence.add(rand.nextInt(4));
     }
 
-    _playSequence();
+    _sequencePlaybackIndex = 0;
+    _sequenceTimer = Timer(const Duration(milliseconds: 500), _playNextSequenceStep);
   }
 
-  Future<void> _playSequence() async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    for (int node in _sequence) {
-      if (!mounted) return;
-      setState(() => _litNodeIndex = node);
-      AudioService.instance.playTick();
-      await Future.delayed(const Duration(milliseconds: 450));
-      if (!mounted) return;
-      setState(() => _litNodeIndex = -1);
-      await Future.delayed(const Duration(milliseconds: 200));
-    }
-    if (mounted) {
+  void _playNextSequenceStep() {
+    if (!mounted) return;
+    if (_sequencePlaybackIndex >= _sequence.length) {
       setState(() {
         _isPlayingSequence = false;
+        _litNodeIndex = -1;
       });
+      return;
     }
+
+    final node = _sequence[_sequencePlaybackIndex];
+    setState(() => _litNodeIndex = node);
+    AudioService.instance.playTick();
+
+    _sequenceTimer = Timer(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      setState(() => _litNodeIndex = -1);
+      _sequencePlaybackIndex++;
+      _sequenceTimer = Timer(const Duration(milliseconds: 180), _playNextSequenceStep);
+    });
   }
 
   void _onNodeTap(int index) {
@@ -87,7 +114,8 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
     setState(() => _litNodeIndex = index);
     AudioService.instance.playTap();
 
-    Future.delayed(const Duration(milliseconds: 200), () {
+    _tapTimer?.cancel();
+    _tapTimer = Timer(const Duration(milliseconds: 200), () {
       if (mounted) setState(() => _litNodeIndex = -1);
     });
 
@@ -114,7 +142,10 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
           setState(() {
             _currentRound++;
           });
-          Future.delayed(const Duration(milliseconds: 800), _startRound);
+          _nextRoundTimer?.cancel();
+          _nextRoundTimer = Timer(const Duration(milliseconds: 800), () {
+            if (mounted) _startRound();
+          });
         }
       }
     } else {
@@ -150,6 +181,7 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
   }
 
   void _restartGame() {
+    _clearAllTimers();
     setState(() {
       _sequence.clear();
       _playerIndex = 0;
@@ -165,7 +197,7 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF070B14),
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         backgroundColor: AppTheme.surface,
         leading: IconButton(
@@ -186,23 +218,23 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
             Text('🧠 ', style: TextStyle(fontSize: 18)),
             Text(
               'CIPHER HASH CRACKER',
-              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.cyanNeon),
+              style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.8, color: AppTheme.richRuby),
             ),
           ],
         ),
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Column(
               children: [
                 // 1. Mission / Round Header
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(14),
                   decoration: AppTheme.cyberCardDecoration(
-                    borderColor: AppTheme.cyanNeon,
-                    glowColor: AppTheme.cyanNeon,
+                    borderColor: AppTheme.richRuby,
+                    glowColor: AppTheme.richRuby,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -213,21 +245,21 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                           Text(
                             'BLOCK VALIDATION: ROUND $_currentRound/$_maxRounds',
                             style: const TextStyle(
-                              fontSize: 13,
+                              fontSize: 12.5,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.cyanNeon,
-                              letterSpacing: 0.8,
+                              color: AppTheme.richRuby,
+                              letterSpacing: 0.6,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 3),
                           Text(
                             _isPlayingSequence
                                 ? '👀 Observe the hash sequence...'
                                 : '👆 Repeat the cryptographic hash!',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 11.5,
                               fontWeight: FontWeight.w600,
-                              color: _isPlayingSequence ? AppTheme.goldLight : Colors.white,
+                              color: _isPlayingSequence ? AppTheme.goldLight : AppTheme.textPrimary,
                             ),
                           ),
                         ],
@@ -265,7 +297,7 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isReached ? AppTheme.greenHash : AppTheme.surfaceLight,
+                        color: isReached ? AppTheme.greenHash : AppTheme.surfaceSecondary,
                         border: Border.all(
                           color: isReached ? AppTheme.greenHash : AppTheme.surfaceBorder,
                           width: 2,
@@ -273,7 +305,7 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                         boxShadow: isReached
                             ? [
                                 BoxShadow(
-                                  color: AppTheme.greenHash.withValues(alpha: 0.6),
+                                  color: AppTheme.greenHash.withValues(alpha: 0.5),
                                   blurRadius: 8,
                                 )
                               ]
@@ -283,18 +315,18 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                   }),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 20),
 
                 // 3. 2x2 Matrix of Quantum Cryptographic Nodes
                 Center(
                   child: SizedBox(
-                    width: 320,
-                    height: 320,
+                    width: 300,
+                    height: 300,
                     child: GridView.count(
                       crossAxisCount: 2,
                       physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 14,
+                      mainAxisSpacing: 14,
                       children: List.generate(4, (index) {
                         final isLit = _litNodeIndex == index;
                         final color = _nodeColors[index];
@@ -320,9 +352,9 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                                 BoxShadow(
                                   color: isLit
                                       ? color.withValues(alpha: 0.8)
-                                      : color.withValues(alpha: 0.2),
-                                  blurRadius: isLit ? 24 : 10,
-                                  spreadRadius: isLit ? 4 : 1,
+                                      : color.withValues(alpha: 0.15),
+                                  blurRadius: isLit ? 20 : 8,
+                                  spreadRadius: isLit ? 3 : 0,
                                 ),
                               ],
                             ),
@@ -332,7 +364,7 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                                 Text(
                                   _nodeIcons[index],
                                   style: TextStyle(
-                                    fontSize: 38,
+                                    fontSize: 36,
                                     shadows: isLit
                                         ? [Shadow(color: color, blurRadius: 16)]
                                         : null,
@@ -342,7 +374,7 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                                 Text(
                                   _nodeNames[index],
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 10.5,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 0.8,
                                     color: isLit ? Colors.white : color,
@@ -357,19 +389,19 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 20),
 
                 // 4. Instructions
                 Text(
                   _isPlayingSequence ? 'MEMORIZE CIPHER...' : 'TAP MATCHING NODES',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 18),
               ],
             ),
           ),
@@ -378,11 +410,11 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
           if (_isGameOver)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withValues(alpha: 0.85),
+                color: Colors.black.withValues(alpha: 0.65),
                 child: Center(
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 24),
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(22),
                     decoration: AppTheme.cyberCardDecoration(
                       borderColor: _wonGame ? AppTheme.greenHash : AppTheme.redOverheat,
                       glowColor: _wonGame ? AppTheme.greenHash : AppTheme.redOverheat,
@@ -392,36 +424,36 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                       children: [
                         Text(
                           _wonGame ? '🏆' : '⚠️',
-                          style: const TextStyle(fontSize: 48),
+                          style: const TextStyle(fontSize: 44),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           _wonGame ? 'BLOCK MINED SUCCESSFULLY!' : 'HASH MISMATCH!',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.w900,
                             color: _wonGame ? AppTheme.greenHash : AppTheme.redOverheat,
-                            letterSpacing: 1.0,
+                            letterSpacing: 0.8,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
                             color: AppTheme.surfaceLight,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.surfaceBorder),
+                            border: Border.all(color: AppTheme.surfaceBorderSubtle),
                           ),
                           child: Column(
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Satoshis Mined:', style: TextStyle(color: AppTheme.textMuted)),
+                                  const Text('Satoshis Mined:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                   Text(
                                     '+$_totalSatoshisWon SAT',
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       fontWeight: FontWeight.w900,
                                       color: AppTheme.bitcoinGold,
                                     ),
@@ -432,11 +464,11 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Power Grid Bonus:', style: TextStyle(color: AppTheme.textMuted)),
+                                  const Text('Power Grid Bonus:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                   Text(
                                     _wonGame ? '+50% ⚡' : '+25% ⚡',
                                     style: const TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: AppTheme.cyanNeon,
                                     ),
@@ -447,13 +479,13 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Rounds Cleared:', style: TextStyle(color: AppTheme.textMuted)),
+                                  const Text('Rounds Cleared:', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
                                   Text(
                                     '${_wonGame ? _maxRounds : _currentRound - 1} / $_maxRounds',
                                     style: const TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: AppTheme.textPrimary,
                                     ),
                                   ),
                                 ],
@@ -461,18 +493,18 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         Row(
                           children: [
                             Expanded(
                               child: OutlinedButton(
                                 onPressed: _restartGame,
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
                                   side: const BorderSide(color: AppTheme.surfaceBorder),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
-                                child: const Text('RETRY', style: TextStyle(color: Colors.white)),
+                                child: const Text('RETRY', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -480,15 +512,18 @@ class _HashCrackerGameState extends State<HashCrackerGame> {
                               child: ElevatedButton(
                                 onPressed: widget.onGameOver,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.bitcoinGold,
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  backgroundColor: AppTheme.richRuby,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  elevation: 2,
                                 ),
                                 child: const Text(
                                   'COLLECT',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.w900,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),

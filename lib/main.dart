@@ -35,7 +35,7 @@ class BTMinerApp extends StatelessWidget {
     return MaterialApp(
       title: 'Bitcoin Miner - Gold Diggers',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
       home: const GameMainScreen(),
     );
   }
@@ -166,10 +166,10 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
             const Text('⚡ ', style: TextStyle(fontSize: 18)),
             RichText(
               text: const TextSpan(
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 0.8),
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: 0.8),
                 children: [
-                  TextSpan(text: 'BITCOIN ', style: TextStyle(color: Colors.white)),
-                  TextSpan(text: 'MINER', style: TextStyle(color: AppTheme.bitcoinGold)),
+                  TextSpan(text: 'BITCOIN ', style: TextStyle(color: AppTheme.textPrimary)),
+                  TextSpan(text: 'MINER', style: TextStyle(color: AppTheme.richRuby)),
                 ],
               ),
             ),
@@ -179,7 +179,7 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
           // Quick Games Arcade Shortcut
           IconButton(
             tooltip: 'Arcade Mini-Games',
-            icon: const Icon(Icons.sports_esports, color: AppTheme.orangeFrenzy),
+            icon: const Icon(Icons.sports_esports_outlined, color: AppTheme.richRuby),
             onPressed: () {
               setState(() => currentTabIndex = 1);
             },
@@ -203,7 +203,7 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
                           width: 8,
                           height: 8,
                           decoration: const BoxDecoration(
-                            color: AppTheme.orangeFrenzy,
+                            color: AppTheme.richRuby,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -265,43 +265,51 @@ class _GameMainScreenState extends State<GameMainScreen> with WidgetsBindingObse
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentTabIndex > 5 ? 0 : currentTabIndex,
-        onTap: (index) {
-          setState(() => currentTabIndex = index);
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.videogame_asset),
-            activeIcon: Icon(Icons.videogame_asset, color: AppTheme.bitcoinGold),
-            label: 'Mine',
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: AppTheme.surface,
+          border: Border(
+            top: BorderSide(color: AppTheme.surfaceBorder, width: 1.0),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sports_esports),
-            activeIcon: Icon(Icons.sports_esports, color: AppTheme.orangeFrenzy),
-            label: 'Games',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.memory),
-            activeIcon: Icon(Icons.memory, color: AppTheme.cyanNeon),
-            label: 'Rigs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.engineering),
-            activeIcon: Icon(Icons.engineering, color: AppTheme.purpleQuantum),
-            label: 'Miners',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            activeIcon: Icon(Icons.trending_up, color: AppTheme.greenHash),
-            label: 'Market',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lock),
-            activeIcon: Icon(Icons.lock, color: AppTheme.cyanNeon),
-            label: 'Vault',
-          ),
-        ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: currentTabIndex > 5 ? 0 : currentTabIndex,
+          onTap: (index) {
+            setState(() => currentTabIndex = index);
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.videogame_asset_outlined),
+              activeIcon: Icon(Icons.videogame_asset, color: AppTheme.richRuby),
+              label: 'Mine',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.sports_esports_outlined),
+              activeIcon: Icon(Icons.sports_esports, color: AppTheme.orangeFrenzy),
+              label: 'Games',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.memory_outlined),
+              activeIcon: Icon(Icons.memory, color: AppTheme.cyanNeon),
+              label: 'Rigs',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.engineering_outlined),
+              activeIcon: Icon(Icons.engineering, color: AppTheme.purpleQuantum),
+              label: 'Miners',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.trending_up_outlined),
+              activeIcon: Icon(Icons.trending_up, color: AppTheme.greenHash),
+              label: 'Market',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.lock_outline),
+              activeIcon: Icon(Icons.lock, color: AppTheme.bitcoinGold),
+              label: 'Vault',
+            ),
+          ],
+        ),
       ),
     );
   }
